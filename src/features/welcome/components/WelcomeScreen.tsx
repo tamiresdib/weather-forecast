@@ -6,22 +6,22 @@ type WelcomeScreenProps = {
 
 export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
   return (
-    <main className="min-h-dvh bg-gradient-to-b from-[#005195] via-[#2f80c8] to-[#c4d8e8]">
+    <main className="app-background">
       <section
         aria-labelledby="welcome-title"
-        className="flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden px-6 py-10"
+        className="app-screen flex flex-col items-center justify-center"
       >
         <img
           src={sunIcon}
           alt=""
           aria-hidden="true"
-          className="w-full max-w-[340px]"
+          className="w-full max-w-[min(340px,82vw)]"
         />
 
-        <div className="mt-10 w-full max-w-[304px] rounded-[38px] bg-white px-8 pb-8 pt-9 text-center shadow-[0_18px_40px_rgba(18,57,95,0.12)]">
+        <div className="mt-[clamp(32px,6dvh,48px)] w-full max-w-[304px] rounded-[38px] bg-white px-8 pb-8 pt-9 text-center shadow-[0_18px_40px_rgba(18,57,95,0.12)]">
           <h1
             id="welcome-title"
-            className="text-[32px] font-extrabold leading-none text-[#4596F0]"
+            className="text-[clamp(28px,8vw,32px)] font-extrabold leading-none text-[#4596F0]"
           >
             Boas vindas!
           </h1>
