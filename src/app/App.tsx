@@ -1,9 +1,7 @@
+import { WelcomeScreen } from "../features/welcome/components/WelcomeScreen";
+
 function App() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-      <h1 className="text-3xl font-bold">Weather Forecast</h1>
-    </main>
-  );
+  return <WelcomeScreen />;
 }
 
 export default App;
