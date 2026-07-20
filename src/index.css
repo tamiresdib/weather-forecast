@@ -1,1 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700;800&display=swap");
 @import "tailwindcss";
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
+@layer components {
+  .app-background {
+    @apply min-h-dvh bg-gradient-to-b from-[#005195] via-[#2f80c8] to-[#c4d8e8];
+  }
+
+  .app-screen {
+    @apply min-h-dvh w-full overflow-hidden px-[clamp(20px,6vw,32px)] py-[clamp(32px,7dvh,56px)];
+  }
+
+  .app-mobile-container {
+    @apply mx-auto w-full max-w-[480px];
+  }
+}
