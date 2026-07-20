@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
 import { searchCityWeatherList } from '../services/weatherService';
 import { CityNotFoundState } from './CityNotFoundState';
@@ -13,32 +13,85 @@ export function WeatherSearchScreen({
 }: WeatherSearchScreenProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [citiesWeather, setCitiesWeather] = useState<CityWeather[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasSearched, setHasSearched] = useState(false);
 
-  async function handleSearch(event?: React.FormEvent<HTMLFormElement>) {
-    event?.preventDefault();
-
-    if (!searchTerm.trim()) {
-      return;
-    }
+  async function loadDefaultCity() {
+    setIsLoading(true);
 
     try {
-      setIsLoading(true);
-      setHasSearched(true);
-
-      const weatherList = await searchCityWeatherList(searchTerm);
+      const weatherList = await searchCityWeatherList('São Paulo');
       setCitiesWeather(weatherList);
-    } catch {
+    } catch (error) {
+      console.error('Default city search failed:', error);
       setCitiesWeather([]);
-      setHasSearched(true);
     } finally {
       setIsLoading(false);
     }
   }
 
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadInitialCity() {
+      try {
+        const weatherList = await searchCityWeatherList('São Paulo');
+
+        if (isMounted) {
+          setCitiesWeather(weatherList);
+        }
+      } catch (error) {
+        console.error('Default city search failed:', error);
+
+        if (isMounted) {
+          setCitiesWeather([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadInitialCity();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  async function handleSearch(event?: React.FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+
+    const cityName = searchTerm.trim();
+
+    if (!cityName) {
+      await loadDefaultCity();
+      return;
+    }
+
+    setIsLoading(true);
+    setHasSearched(true);
+
+    try {
+      const weatherList = await searchCityWeatherList(cityName);
+      setCitiesWeather(weatherList);
+    } catch (error) {
+      console.error('Weather search failed:', error);
+      setCitiesWeather([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleClearSearch() {
+    setSearchTerm('');
+    setHasSearched(false);
+    await loadDefaultCity();
+  }
+
   async function handleRetry() {
-    await handleSearch();
+    await handleClearSearch();
   }
 
   return (
@@ -55,20 +108,30 @@ export function WeatherSearchScreen({
           <input
             id="city-search"
             name="city-search"
-            type="search"
+            type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Buscar cidade"
             className="h-[clamp(44px,7dvh,52px)] w-full rounded-full bg-white px-12 text-[clamp(14px,4vw,16px)] font-medium text-[#4596F0] placeholder:text-[#4596F0] focus:outline-none focus:ring-4 focus:ring-white/40"
           />
 
-          <button
-            type="submit"
-            aria-label="Buscar cidade"
+          <span
+            aria-hidden="true"
             className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#4596F0]"
           >
             ⌕
-          </button>
+          </span>
+
+          {searchTerm ? (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              aria-label="Limpar busca"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-[#4596F0]"
+            >
+              ×
+            </button>
+          ) : null}
         </form>
 
         <h1

@@ -15,6 +15,14 @@ function getApiKey() {
   return OPENWEATHER_API_KEY;
 }
 
+function capitalizeFirstLetter(value: string) {
+  if (!value) {
+    return value;
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function formatTime(timestamp: number, timezone: number) {
   return new Intl.DateTimeFormat('pt-BR', {
     hour: '2-digit',
@@ -27,11 +35,14 @@ function mapCurrentWeatherToCityWeather(
   location: OpenWeatherGeoLocation,
   currentWeather: OpenWeatherCurrentResponse,
 ): CityWeather {
+  const weatherDescription =
+    currentWeather.weather[0]?.description ?? 'Tempo indisponível';
+
   return {
-    id: `${location.name}-${location.lat}-${location.lon}`,
+    id: `${location.name}-${location.country}-${location.lat}-${location.lon}`,
     city: location.local_names?.pt ?? location.name,
     temperature: Math.round(currentWeather.main.temp),
-    condition: currentWeather.weather[0]?.description ?? 'Tempo indisponível',
+    condition: capitalizeFirstLetter(weatherDescription),
     time: formatTime(currentWeather.dt, currentWeather.timezone),
   };
 }
@@ -69,7 +80,7 @@ export async function searchCityWeatherList(
   }
 
   const params = new URLSearchParams({
-    q: `${normalizedCityName}`,
+    q: `${normalizedCityName},BR`,
     limit: '1',
     appid: getApiKey(),
   });
@@ -83,7 +94,6 @@ export async function searchCityWeatherList(
   }
 
   const locations = (await response.json()) as OpenWeatherGeoLocation[];
-
   const locationsToFetch = locations.slice(0, 1);
 
   const weatherList = await Promise.all(
