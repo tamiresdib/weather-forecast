@@ -4,7 +4,13 @@ import { getCityWeatherList } from '../services/weatherService';
 import { CityNotFoundState } from './CityNotFoundState';
 import { CityWeatherCard } from './CityWeatherCard';
 
-export function WeatherSearchScreen() {
+type WeatherSearchScreenProps = {
+  onSelectCity?: () => void;
+};
+
+export function WeatherSearchScreen({
+  onSelectCity,
+}: WeatherSearchScreenProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [citiesWeather, setCitiesWeather] =
     useState<CityWeather[]>(getCityWeatherList());
@@ -86,7 +92,11 @@ export function WeatherSearchScreen() {
 
             <div className="mt-[clamp(16px,3dvh,24px)] grid gap-[clamp(12px,2dvh,16px)]">
               {filteredCities.map((weather) => (
-                <CityWeatherCard key={weather.id} weather={weather} />
+                <CityWeatherCard
+                  key={weather.id}
+                  weather={weather}
+                  onClick={onSelectCity}
+                />
               ))}
             </div>
           </>
