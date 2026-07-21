@@ -10,11 +10,13 @@ export function ApiErrorState({ onRetry }: ApiErrorStateProps) {
       aria-label="Erro ao buscar informações do clima"
       className="flex min-h-[72dvh] flex-col items-center justify-center text-center"
     >
-      <img
-        src={apiErrorImage}
-        alt="Ops! Parece que algo deu errado. Não conseguimos buscar as informações do clima no momento. Tente novamente."
-        className="w-full max-w-[329px]"
-      />
+      <div className="flex w-full flex-col items-center">
+        <img
+          src={apiErrorImage}
+          alt="Ops! Parece que algo deu errado. Não conseguimos buscar as informações do clima no momento. Tente novamente."
+          className="w-full max-w-[329px]"
+        />
+      </div>
 
       <button
         type="button"
