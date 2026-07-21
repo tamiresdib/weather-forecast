@@ -16,24 +16,10 @@ export function WeatherSearchScreen({
   const [isLoading, setIsLoading] = useState(true);
   const [hasSearched, setHasSearched] = useState(false);
 
-  async function loadDefaultCity() {
-    setIsLoading(true);
-
-    try {
-      const weatherList = await searchCityWeatherList('São Paulo');
-      setCitiesWeather(weatherList);
-    } catch (error) {
-      console.error('Default city search failed:', error);
-      setCitiesWeather([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
     let isMounted = true;
 
-    async function loadInitialCity() {
+    async function loadDefaultCity() {
       try {
         const weatherList = await searchCityWeatherList('São Paulo');
 
@@ -53,7 +39,7 @@ export function WeatherSearchScreen({
       }
     }
 
-    void loadInitialCity();
+    void loadDefaultCity();
 
     return () => {
       isMounted = false;
@@ -66,7 +52,6 @@ export function WeatherSearchScreen({
     const cityName = searchTerm.trim();
 
     if (!cityName) {
-      await loadDefaultCity();
       return;
     }
 
@@ -87,7 +72,17 @@ export function WeatherSearchScreen({
   async function handleClearSearch() {
     setSearchTerm('');
     setHasSearched(false);
-    await loadDefaultCity();
+    setIsLoading(true);
+
+    try {
+      const weatherList = await searchCityWeatherList('São Paulo');
+      setCitiesWeather(weatherList);
+    } catch (error) {
+      console.error('Default city search failed:', error);
+      setCitiesWeather([]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function handleRetry() {
@@ -115,12 +110,13 @@ export function WeatherSearchScreen({
             className="h-[clamp(44px,7dvh,52px)] w-full rounded-full bg-white px-12 text-[clamp(14px,4vw,16px)] font-medium text-[#4596F0] placeholder:text-[#4596F0] focus:outline-none focus:ring-4 focus:ring-white/40"
           />
 
-          <span
-            aria-hidden="true"
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl text-[#4596F0]"
+          <button
+            type="submit"
+            aria-label="Buscar cidade"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl leading-none text-[#4596F0]"
           >
             ⌕
-          </span>
+          </button>
 
           {searchTerm ? (
             <button

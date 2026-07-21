@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
 import type { WeatherDetails } from '../../types/weatherDetails';
 import { getWeatherDetailsByCoordinates } from '../services/weatherService';
@@ -15,6 +15,9 @@ export function WeatherDetailsScreen({
   const [weatherDetails, setWeatherDetails] = useState<WeatherDetails | null>(
     null,
   );
+  const [selectedDailyForecastId, setSelectedDailyForecastId] = useState<
+    string | null
+  >(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -44,6 +47,41 @@ export function WeatherDetailsScreen({
     };
   }, [selectedCity]);
 
+  const activeDailyForecast = useMemo(() => {
+    if (!weatherDetails) {
+      return null;
+    }
+
+    if (!selectedDailyForecastId) {
+      return weatherDetails.dailyForecast[0] ?? null;
+    }
+
+    return (
+      weatherDetails.dailyForecast.find(
+        (forecast) => forecast.id === selectedDailyForecastId,
+      ) ??
+      weatherDetails.dailyForecast[0] ??
+      null
+    );
+  }, [selectedDailyForecastId, weatherDetails]);
+
+  const activeDailyForecastId = activeDailyForecast?.id;
+
+  const activeHourlyForecast =
+    activeDailyForecast?.hourlyForecast ?? weatherDetails?.hourlyForecast;
+
+  const activeTemperature =
+    activeDailyForecast?.temperature ?? weatherDetails?.currentTemperature;
+
+  const activeMaxTemperature =
+    activeDailyForecast?.maxTemperature ?? weatherDetails?.maxTemperature;
+
+  const activeMinTemperature =
+    activeDailyForecast?.minTemperature ?? weatherDetails?.minTemperature;
+
+  const activeCondition =
+    activeDailyForecast?.condition ?? weatherDetails?.condition;
+
   return (
     <main className="app-background h-dvh overflow-hidden">
       <section
@@ -65,9 +103,9 @@ export function WeatherDetailsScreen({
             <path
               d="M15 18L9 12L15 6"
               stroke="currentColor"
-              strokeWidth="3"
               strokeLinecap="round"
               strokeLinejoin="round"
+              strokeWidth="3"
             />
           </svg>
         </button>
@@ -91,12 +129,15 @@ export function WeatherDetailsScreen({
               </h1>
 
               <p className="mt-1 text-[clamp(68px,21vw,96px)] font-normal leading-none">
-                {weatherDetails.currentTemperature}°
+                {activeTemperature}°
               </p>
 
               <p className="mt-2 text-[clamp(16px,4.6vw,20px)] font-bold">
-                Max: {weatherDetails.maxTemperature}° &nbsp; Min:{' '}
-                {weatherDetails.minTemperature}°
+                Max: {activeMaxTemperature}° &nbsp; Min: {activeMinTemperature}°
+              </p>
+
+              <p className="mt-1 text-sm font-semibold text-white/90">
+                {activeCondition}
               </p>
             </header>
           ) : null}
@@ -119,14 +160,14 @@ export function WeatherDetailsScreen({
                       id="hourly-forecast-title"
                       className="text-base font-medium"
                     >
-                      Hoje
+                      {activeDailyForecast?.day ?? 'Hoje'}
                     </h3>
 
                     <p className="text-base font-medium">Julho</p>
                   </div>
 
                   <div className="mt-3 grid grid-cols-5 gap-2">
-                    {weatherDetails.hourlyForecast.map((forecast) => (
+                    {activeHourlyForecast?.map((forecast) => (
                       <article
                         key={forecast.id}
                         className="flex min-w-0 flex-col items-center text-center"
@@ -165,9 +206,19 @@ export function WeatherDetailsScreen({
                     {weatherDetails.dailyForecast
                       .slice(0, 6)
                       .map((forecast) => (
-                        <article
+                        <button
                           key={forecast.id}
-                          className="grid min-h-0 grid-cols-[1fr_36px_88px] items-center overflow-hidden border-b border-white/40 last:border-b-0"
+                          type="button"
+                          onClick={() =>
+                            setSelectedDailyForecastId(forecast.id)
+                          }
+                          aria-label={`Ver detalhes de ${forecast.day}`}
+                          aria-pressed={activeDailyForecastId === forecast.id}
+                          className={`-mx-2 grid min-h-0 grid-cols-[1fr_36px_88px] items-center overflow-hidden rounded-xl border-b border-white/40 px-2 text-left transition-colors last:border-b-0 focus:outline-none ${
+                            activeDailyForecastId === forecast.id
+                              ? 'bg-[#1F75D8]'
+                              : 'bg-transparent hover:bg-[#2F86E8]'
+                          }`}
                         >
                           <p className="min-w-0 truncate text-[clamp(14px,3.8vw,16px)] font-bold leading-none">
                             {forecast.day}
@@ -186,7 +237,7 @@ export function WeatherDetailsScreen({
                             {forecast.minTemperature}° /{' '}
                             {forecast.maxTemperature}°
                           </p>
-                        </article>
+                        </button>
                       ))}
                   </div>
                 </section>
