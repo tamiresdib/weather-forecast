@@ -9,101 +9,64 @@ type WeatherSearchScreenProps = {
   onSelectCity?: (weather: CityWeather) => void;
 };
 
+const DEFAULT_CITY_NAME = 'São Paulo';
+const SEARCH_DEBOUNCE_IN_MS = 500;
+
 export function WeatherSearchScreen({
   onSelectCity,
 }: WeatherSearchScreenProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [citiesWeather, setCitiesWeather] = useState<CityWeather[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasSearched, setHasSearched] = useState(false);
   const [hasApiError, setHasApiError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;
+    let isActive = true;
 
-    async function loadDefaultCity() {
-      try {
-        const weatherList = await searchCityWeatherList('São Paulo');
+    const cityName = searchTerm.trim() || DEFAULT_CITY_NAME;
+    const debounceTime = searchTerm.trim() ? SEARCH_DEBOUNCE_IN_MS : 0;
 
-        if (isMounted) {
-          setCitiesWeather(weatherList);
-          setHasApiError(false);
-        }
-      } catch (error) {
-        console.error('Default city search failed:', error);
+    const timeoutId = window.setTimeout(() => {
+      async function loadCityWeather() {
+        setIsLoading(true);
+        setHasApiError(false);
 
-        if (isMounted) {
-          setCitiesWeather([]);
-          setHasApiError(true);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
+        try {
+          const weatherList = await searchCityWeatherList(cityName);
+
+          if (isActive) {
+            setCitiesWeather(weatherList);
+          }
+        } catch (error) {
+          console.error('Weather search failed:', error);
+
+          if (isActive) {
+            setCitiesWeather([]);
+            setHasApiError(true);
+          }
+        } finally {
+          if (isActive) {
+            setIsLoading(false);
+          }
         }
       }
-    }
 
-    void loadDefaultCity();
+      void loadCityWeather();
+    }, debounceTime);
 
     return () => {
-      isMounted = false;
+      isActive = false;
+      window.clearTimeout(timeoutId);
     };
-  }, []);
+  }, [searchTerm, retryCount]);
 
-  async function handleSearch(event?: React.FormEvent<HTMLFormElement>) {
-    event?.preventDefault();
-
-    const cityName = searchTerm.trim();
-
-    if (!cityName) {
-      return;
-    }
-
-    setIsLoading(true);
-    setHasSearched(true);
-    setHasApiError(false);
-
-    try {
-      const weatherList = await searchCityWeatherList(cityName);
-      setCitiesWeather(weatherList);
-    } catch (error) {
-      console.error('Weather search failed:', error);
-      setCitiesWeather([]);
-      setHasApiError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleClearSearch() {
+  function handleClearSearch() {
     setSearchTerm('');
-    setHasSearched(false);
-    setIsLoading(true);
-    setHasApiError(false);
-
-    try {
-      const weatherList = await searchCityWeatherList('São Paulo');
-      setCitiesWeather(weatherList);
-    } catch (error) {
-      console.error('Default city search failed:', error);
-      setCitiesWeather([]);
-      setHasApiError(true);
-    } finally {
-      setIsLoading(false);
-    }
   }
 
-  async function handleRetryApiRequest() {
-    if (searchTerm.trim()) {
-      await handleSearch();
-      return;
-    }
-
-    await handleClearSearch();
-  }
-
-  async function handleRetryCitySearch() {
-    await handleClearSearch();
+  function handleRetryApiRequest() {
+    setRetryCount((currentRetryCount) => currentRetryCount + 1);
   }
 
   return (
@@ -116,7 +79,7 @@ export function WeatherSearchScreen({
           <ApiErrorState onRetry={handleRetryApiRequest} />
         ) : (
           <>
-            <form role="search" className="relative" onSubmit={handleSearch}>
+            <div role="search" className="relative">
               <label htmlFor="city-search" className="sr-only">
                 Buscar cidade
               </label>
@@ -128,16 +91,16 @@ export function WeatherSearchScreen({
                 value={searchTerm}
                 onChange={(event) => setSearchTerm(event.target.value)}
                 placeholder="Buscar cidade"
+                autoComplete="off"
                 className="h-[clamp(44px,7dvh,52px)] w-full rounded-full bg-white px-12 text-[clamp(14px,4vw,16px)] font-medium text-[#4596F0] placeholder:text-[#4596F0] focus:outline-none focus:ring-4 focus:ring-white/40"
               />
 
-              <button
-                type="submit"
-                aria-label="Buscar cidade"
+              <span
+                aria-hidden="true"
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-3xl leading-none text-[#4596F0]"
               >
                 ⌕
-              </button>
+              </span>
 
               {searchTerm ? (
                 <button
@@ -149,7 +112,7 @@ export function WeatherSearchScreen({
                   ×
                 </button>
               ) : null}
-            </form>
+            </div>
 
             <h1
               id="weather-search-title"
@@ -176,8 +139,8 @@ export function WeatherSearchScreen({
                   />
                 ))}
               </div>
-            ) : hasSearched ? (
-              <CityNotFoundState onRetry={handleRetryCitySearch} />
+            ) : searchTerm.trim() ? (
+              <CityNotFoundState onRetry={handleClearSearch} />
             ) : null}
           </>
         )}
