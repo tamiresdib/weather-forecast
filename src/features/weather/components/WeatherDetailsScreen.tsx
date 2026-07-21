@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
 import type { WeatherDetails } from '../../types/weatherDetails';
 import { getWeatherDetailsByCoordinates } from '../services/weatherService';
+import { ApiErrorState } from './ApiErrorState';
 
 type WeatherDetailsScreenProps = {
   selectedCity: CityWeather;
@@ -19,6 +20,25 @@ export function WeatherDetailsScreen({
     string | null
   >(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasApiError, setHasApiError] = useState(false);
+
+  async function loadWeatherDetails() {
+    setIsLoading(true);
+    setHasApiError(false);
+
+    try {
+      const details = await getWeatherDetailsByCoordinates(selectedCity);
+
+      setWeatherDetails(details);
+    } catch (error) {
+      console.error('Weather details request failed:', error);
+
+      setWeatherDetails(null);
+      setHasApiError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -27,6 +47,7 @@ export function WeatherDetailsScreen({
       .then((details) => {
         if (isMounted) {
           setWeatherDetails(details);
+          setHasApiError(false);
         }
       })
       .catch((error) => {
@@ -34,6 +55,7 @@ export function WeatherDetailsScreen({
 
         if (isMounted) {
           setWeatherDetails(null);
+          setHasApiError(true);
         }
       })
       .finally(() => {
@@ -82,6 +104,16 @@ export function WeatherDetailsScreen({
   const activeCondition =
     activeDailyForecast?.condition ?? weatherDetails?.condition;
 
+  if (hasApiError) {
+    return (
+      <main className="app-background">
+        <section className="app-screen app-mobile-container">
+          <ApiErrorState onRetry={loadWeatherDetails} />
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="app-background h-dvh overflow-hidden">
       <section
@@ -112,7 +144,11 @@ export function WeatherDetailsScreen({
 
         <div className="app-mobile-container shrink-0 pt-[clamp(72px,11dvh,92px)]">
           {isLoading ? (
-            <p className="mt-8 rounded-2xl bg-white/90 px-5 py-4 text-center text-sm font-medium text-[#4596F0]">
+            <p
+              role="status"
+              aria-live="polite"
+              className="mt-8 rounded-2xl bg-white/90 px-5 py-4 text-center text-sm font-medium text-[#4596F0]"
+            >
               Buscando detalhes da previsão...
             </p>
           ) : weatherDetails ? (
@@ -242,11 +278,7 @@ export function WeatherDetailsScreen({
                   </div>
                 </section>
               </div>
-            ) : (
-              <p className="mt-8 rounded-2xl bg-[#4296F0] px-5 py-4 text-center text-sm font-medium text-white">
-                Não foi possível carregar os detalhes da previsão.
-              </p>
-            )}
+            ) : null}
           </div>
         </div>
       </section>
