@@ -1,25 +1,31 @@
 import { useState } from 'react';
+import type { CityWeather } from '../features/types/cityWeather';
 import { WelcomeScreen } from '../features/welcome/components/WelcomeScreen';
-import { WeatherSearchScreen } from '../features/weather/components/WeatherSearchScreen';
 import { WeatherDetailsScreen } from '../features/weather/components/WeatherDetailsScreen';
+import { WeatherSearchScreen } from '../features/weather/components/WeatherSearchScreen';
 
 type AppScreen = 'welcome' | 'weather-search' | 'weather-details';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('welcome');
+  const [selectedCity, setSelectedCity] = useState<CityWeather | null>(null);
 
-  if (currentScreen === 'weather-details') {
+  function handleSelectCity(weather: CityWeather) {
+    setSelectedCity(weather);
+    setCurrentScreen('weather-details');
+  }
+
+  if (currentScreen === 'weather-details' && selectedCity) {
     return (
-      <WeatherDetailsScreen onBack={() => setCurrentScreen('weather-search')} />
+      <WeatherDetailsScreen
+        selectedCity={selectedCity}
+        onBack={() => setCurrentScreen('weather-search')}
+      />
     );
   }
 
   if (currentScreen === 'weather-search') {
-    return (
-      <WeatherSearchScreen
-        onSelectCity={() => setCurrentScreen('weather-details')}
-      />
-    );
+    return <WeatherSearchScreen onSelectCity={handleSelectCity} />;
   }
 
   return <WelcomeScreen onStart={() => setCurrentScreen('weather-search')} />;

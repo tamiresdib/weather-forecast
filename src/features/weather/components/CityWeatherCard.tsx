@@ -2,20 +2,26 @@ import type { CityWeather } from '../../types/cityWeather';
 
 type CityWeatherCardProps = {
   weather: CityWeather;
-  onClick?: () => void;
+  onClick?: (weather: CityWeather) => void;
 };
 
 export function CityWeatherCard({ weather, onClick }: CityWeatherCardProps) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={() => onClick?.(weather)}
       className="flex min-h-[clamp(72px,11dvh,92px)] w-full items-center justify-between gap-4 rounded-[clamp(18px,5vw,24px)] bg-white px-[clamp(20px,6vw,28px)] py-[clamp(14px,3dvh,18px)] text-left shadow-[0_12px_28px_rgba(18,57,95,0.08)] transition hover:bg-white/95 focus:outline-none focus:ring-4 focus:ring-white/40"
     >
       <div className="min-w-0">
         <h2 className="truncate text-[clamp(16px,5vw,20px)] font-bold leading-none text-[#4596F0]">
           {weather.city}
         </h2>
+
+        {weather.locationLabel ? (
+          <p className="mt-1 truncate text-[clamp(10px,2.8vw,12px)] font-light leading-none text-[#4596F0]">
+            {weather.locationLabel}
+          </p>
+        ) : null}
 
         <p className="mt-1 text-[clamp(10px,2.8vw,12px)] font-light leading-none text-[#4596F0]">
           {weather.time}

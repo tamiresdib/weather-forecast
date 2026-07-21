@@ -21,6 +21,8 @@ export type WeatherDetails = {
   currentTemperature: number;
   maxTemperature: number;
   minTemperature: number;
+  condition: string;
+  time: string;
   hourlyForecast: HourlyForecast[];
   dailyForecast: DailyForecast[];
 };

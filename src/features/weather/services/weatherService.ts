@@ -1,18 +1,25 @@
+import cloudyIcon from '../../../assets/images/Nublado.svg';
+import nightIcon from '../../../assets/images/Noite.svg';
+import partlyCloudyIcon from '../../../assets/images/Inicio da Noite.svg';
+import rainIcon from '../../../assets/images/Chuva.svg';
+import sunnyIcon from '../../../assets/images/Ensolarado.svg';
 import type { CityWeather } from '../../types/cityWeather';
 import type {
   OpenWeatherCurrentResponse,
-  OpenWeatherGeoLocation,
+  OpenWeatherForecastResponse,
+  OpenWeatherLocation,
 } from '../../types/openWeather';
+import type {
+  DailyForecast,
+  HourlyForecast,
+  WeatherDetails,
+} from '../../types/weatherDetails';
 
-const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org';
-const OPENWEATHER_API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
+const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org';
+const DEFAULT_COUNTRY_CODE = 'BR';
 
-function getApiKey() {
-  if (!OPENWEATHER_API_KEY) {
-    throw new Error('OpenWeather API key is missing.');
-  }
-
-  return OPENWEATHER_API_KEY;
+function getOpenWeatherApiKey() {
+  return import.meta.env.VITE_OPENWEATHER_API_KEY as string;
 }
 
 function capitalizeFirstLetter(value: string) {
@@ -31,81 +38,223 @@ function formatTime(timestamp: number, timezone: number) {
   }).format(new Date((timestamp + timezone) * 1000));
 }
 
+function formatDateKey(timestamp: number, timezone: number) {
+  return new Date((timestamp + timezone) * 1000).toISOString().slice(0, 10);
+}
+
+function formatDayLabel(timestamp: number, timezone: number) {
+  const todayKey = formatDateKey(Date.now() / 1000, timezone);
+  const forecastKey = formatDateKey(timestamp, timezone);
+
+  if (forecastKey === todayKey) {
+    return 'Hoje';
+  }
+
+  const day = new Intl.DateTimeFormat('pt-BR', {
+    weekday: 'short',
+    timeZone: 'UTC',
+  }).format(new Date((timestamp + timezone) * 1000));
+
+  return capitalizeFirstLetter(day.replace('.', '')) + '.';
+}
+
+function getWeatherIcon(weatherMain: string, openWeatherIcon: string) {
+  const normalizedWeather = weatherMain.toLowerCase();
+  const isNight = openWeatherIcon.endsWith('n');
+
+  if (normalizedWeather.includes('rain')) {
+    return rainIcon;
+  }
+
+  if (normalizedWeather.includes('drizzle')) {
+    return rainIcon;
+  }
+
+  if (normalizedWeather.includes('thunderstorm')) {
+    return rainIcon;
+  }
+
+  if (normalizedWeather.includes('clear')) {
+    return isNight ? nightIcon : sunnyIcon;
+  }
+
+  if (normalizedWeather.includes('clouds')) {
+    return isNight ? partlyCloudyIcon : cloudyIcon;
+  }
+
+  return isNight ? nightIcon : cloudyIcon;
+}
+
+async function fetchOpenWeather<T>(
+  path: string,
+  params: Record<string, string>,
+): Promise<T> {
+  const apiKey = getOpenWeatherApiKey();
+
+  if (!apiKey) {
+    throw new Error('OpenWeather API key is missing.');
+  }
+
+  const url = new URL(path, OPEN_WEATHER_BASE_URL);
+
+  Object.entries({
+    ...params,
+    appid: apiKey,
+    units: 'metric',
+    lang: 'pt_br',
+  }).forEach(([key, value]) => {
+    url.searchParams.set(key, value);
+  });
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('OpenWeather request failed.');
+  }
+
+  return response.json() as Promise<T>;
+}
+
+async function fetchCityLocation(cityName: string) {
+  const normalizedCityName = cityName.trim();
+
+  const locations = await fetchOpenWeather<OpenWeatherLocation[]>(
+    '/geo/1.0/direct',
+    {
+      q: `${normalizedCityName},${DEFAULT_COUNTRY_CODE}`,
+      limit: '1',
+    },
+  );
+
+  return locations[0];
+}
+
+async function fetchCurrentWeatherByCoordinates(lat: number, lon: number) {
+  return fetchOpenWeather<OpenWeatherCurrentResponse>('/data/2.5/weather', {
+    lat: String(lat),
+    lon: String(lon),
+  });
+}
+
+async function fetchForecastByCoordinates(lat: number, lon: number) {
+  return fetchOpenWeather<OpenWeatherForecastResponse>('/data/2.5/forecast', {
+    lat: String(lat),
+    lon: String(lon),
+  });
+}
+
 function mapCurrentWeatherToCityWeather(
-  location: OpenWeatherGeoLocation,
+  location: OpenWeatherLocation,
   currentWeather: OpenWeatherCurrentResponse,
 ): CityWeather {
-  const weatherDescription =
-    currentWeather.weather[0]?.description ?? 'Tempo indisponível';
+  const weather = currentWeather.weather[0];
 
   return {
-    id: `${location.name}-${location.country}-${location.lat}-${location.lon}`,
-    city: location.local_names?.pt ?? location.name,
+    id: `${location.name}-${location.state ?? location.country}`,
+    city: location.name,
+    locationLabel: location.state
+      ? `${location.state}, ${location.country}`
+      : location.country,
     temperature: Math.round(currentWeather.main.temp),
-    condition: capitalizeFirstLetter(weatherDescription),
+    minTemperature: Math.round(currentWeather.main.temp_min),
+    maxTemperature: Math.round(currentWeather.main.temp_max),
+    condition: capitalizeFirstLetter(weather.description),
     time: formatTime(currentWeather.dt, currentWeather.timezone),
+    lat: location.lat,
+    lon: location.lon,
   };
 }
 
-async function fetchCurrentWeatherByCoordinates(
-  latitude: number,
-  longitude: number,
-) {
-  const params = new URLSearchParams({
-    lat: String(latitude),
-    lon: String(longitude),
-    appid: getApiKey(),
-    units: 'metric',
-    lang: 'pt_br',
+function mapHourlyForecast(
+  forecast: OpenWeatherForecastResponse,
+): HourlyForecast[] {
+  return forecast.list.slice(0, 5).map((item, index) => {
+    const weather = item.weather[0];
+
+    return {
+      id: `${item.dt}-${index}`,
+      time: index === 0 ? 'Agora' : formatTime(item.dt, forecast.city.timezone),
+      temperature: Math.round(item.main.temp),
+      condition: capitalizeFirstLetter(weather.description),
+      icon: getWeatherIcon(weather.main, weather.icon),
+    };
+  });
+}
+
+function mapDailyForecast(
+  forecast: OpenWeatherForecastResponse,
+): DailyForecast[] {
+  const groupedForecast = new Map<
+    string,
+    OpenWeatherForecastResponse['list']
+  >();
+
+  forecast.list.forEach((item) => {
+    const dateKey = formatDateKey(item.dt, forecast.city.timezone);
+    const currentItems = groupedForecast.get(dateKey) ?? [];
+
+    groupedForecast.set(dateKey, [...currentItems, item]);
   });
 
-  const response = await fetch(
-    `${OPENWEATHER_BASE_URL}/data/2.5/weather?${params.toString()}`,
-  );
+  return Array.from(groupedForecast.entries())
+    .slice(0, 6)
+    .map(([dateKey, items]) => {
+      const firstItem = items[0];
+      const weather = firstItem.weather[0];
 
-  if (!response.ok) {
-    throw new Error('Unable to fetch current weather.');
-  }
+      const minTemperature = Math.min(
+        ...items.map((item) => item.main.temp_min),
+      );
 
-  return response.json() as Promise<OpenWeatherCurrentResponse>;
+      const maxTemperature = Math.max(
+        ...items.map((item) => item.main.temp_max),
+      );
+
+      return {
+        id: dateKey,
+        day: formatDayLabel(firstItem.dt, forecast.city.timezone),
+        minTemperature: Math.round(minTemperature),
+        maxTemperature: Math.round(maxTemperature),
+        condition: capitalizeFirstLetter(weather.description),
+        icon: getWeatherIcon(weather.main, weather.icon),
+      };
+    });
 }
 
 export async function searchCityWeatherList(
   cityName: string,
 ): Promise<CityWeather[]> {
-  const normalizedCityName = cityName.trim();
+  const location = await fetchCityLocation(cityName);
 
-  if (!normalizedCityName) {
+  if (!location) {
     return [];
   }
 
-  const params = new URLSearchParams({
-    q: `${normalizedCityName},BR`,
-    limit: '1',
-    appid: getApiKey(),
-  });
-
-  const response = await fetch(
-    `${OPENWEATHER_BASE_URL}/geo/1.0/direct?${params.toString()}`,
+  const currentWeather = await fetchCurrentWeatherByCoordinates(
+    location.lat,
+    location.lon,
   );
 
-  if (!response.ok) {
-    throw new Error('Unable to fetch city list.');
-  }
+  return [mapCurrentWeatherToCityWeather(location, currentWeather)];
+}
 
-  const locations = (await response.json()) as OpenWeatherGeoLocation[];
-  const locationsToFetch = locations.slice(0, 1);
-
-  const weatherList = await Promise.all(
-    locationsToFetch.map(async (location) => {
-      const currentWeather = await fetchCurrentWeatherByCoordinates(
-        location.lat,
-        location.lon,
-      );
-
-      return mapCurrentWeatherToCityWeather(location, currentWeather);
-    }),
+export async function getWeatherDetailsByCoordinates(
+  selectedCity: CityWeather,
+): Promise<WeatherDetails> {
+  const forecast = await fetchForecastByCoordinates(
+    selectedCity.lat,
+    selectedCity.lon,
   );
 
-  return weatherList;
+  return {
+    city: selectedCity.city,
+    locationLabel: selectedCity.locationLabel,
+    currentTemperature: selectedCity.temperature,
+    maxTemperature: selectedCity.maxTemperature,
+    minTemperature: selectedCity.minTemperature,
+    condition: selectedCity.condition,
+    time: selectedCity.time,
+    hourlyForecast: mapHourlyForecast(forecast),
+    dailyForecast: mapDailyForecast(forecast),
+  };
 }

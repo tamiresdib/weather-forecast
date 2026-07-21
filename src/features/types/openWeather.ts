@@ -1,6 +1,5 @@
-export type OpenWeatherGeoLocation = {
+export type OpenWeatherLocation = {
   name: string;
-  local_names?: Record<string, string>;
   lat: number;
   lon: number;
   country: string;
@@ -8,21 +7,38 @@ export type OpenWeatherGeoLocation = {
 };
 
 export type OpenWeatherCurrentResponse = {
-  weather: Array<{
-    id: number;
-    main: string;
-    description: string;
-    icon: string;
-  }>;
+  dt: number;
+  timezone: number;
+  name: string;
   main: {
     temp: number;
     temp_min: number;
     temp_max: number;
   };
-  wind: {
-    speed: number;
+  weather: {
+    main: string;
+    description: string;
+    icon: string;
+  }[];
+};
+
+export type OpenWeatherForecastResponse = {
+  city: {
+    name: string;
+    country: string;
+    timezone: number;
   };
-  dt: number;
-  timezone: number;
-  name: string;
+  list: {
+    dt: number;
+    main: {
+      temp: number;
+      temp_min: number;
+      temp_max: number;
+    };
+    weather: {
+      main: string;
+      description: string;
+      icon: string;
+    }[];
+  }[];
 };

@@ -5,7 +5,7 @@ import { CityNotFoundState } from './CityNotFoundState';
 import { CityWeatherCard } from './CityWeatherCard';
 
 type WeatherSearchScreenProps = {
-  onSelectCity?: () => void;
+  onSelectCity?: (weather: CityWeather) => void;
 };
 
 export function WeatherSearchScreen({
