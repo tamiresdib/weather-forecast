@@ -16,7 +16,6 @@ import type {
 } from '../../types/weatherDetails';
 
 const OPEN_WEATHER_BASE_URL = 'https://api.openweathermap.org';
-const DEFAULT_COUNTRY_CODE = 'BR';
 
 function getOpenWeatherApiKey() {
   return import.meta.env.VITE_OPENWEATHER_API_KEY as string;
@@ -128,7 +127,7 @@ async function fetchCityLocation(cityName: string) {
   const locations = await fetchOpenWeather<OpenWeatherLocation[]>(
     '/geo/1.0/direct',
     {
-      q: `${normalizedCityName},${DEFAULT_COUNTRY_CODE}`,
+      q: normalizedCityName,
       limit: '1',
     },
   );
