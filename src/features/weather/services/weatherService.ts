@@ -1,8 +1,8 @@
-import cloudyIcon from '../../../assets/images/Nublado.svg';
-import nightIcon from '../../../assets/images/Noite.svg';
-import partlyCloudyIcon from '../../../assets/images/Inicio da Noite.svg';
 import rainIcon from '../../../assets/images/Chuva.svg';
 import sunnyIcon from '../../../assets/images/Ensolarado.svg';
+import partlyCloudyIcon from '../../../assets/images/Inicio da Noite.svg';
+import cloudyIcon from '../../../assets/images/Nublado.svg';
+import nightIcon from '../../../assets/images/Noite.svg';
 import type { CityWeather } from '../../types/cityWeather';
 import type {
   OpenWeatherCurrentResponse,
@@ -56,6 +56,13 @@ function formatDayLabel(timestamp: number, timezone: number) {
   }).format(new Date((timestamp + timezone) * 1000));
 
   return capitalizeFirstLetter(day.replace('.', '')) + '.';
+}
+
+function isTodayForecast(timestamp: number, timezone: number) {
+  const todayKey = formatDateKey(Date.now() / 1000, timezone);
+  const forecastKey = formatDateKey(timestamp, timezone);
+
+  return forecastKey === todayKey;
 }
 
 function getWeatherIcon(weatherMain: string, openWeatherIcon: string) {
@@ -152,9 +159,9 @@ function mapCurrentWeatherToCityWeather(
   return {
     id: `${location.name}-${location.state ?? location.country}`,
     city: location.name,
-    locationLabel: location.state
-      ? `${location.state}, ${location.country}`
-      : location.country,
+    locationLabel: location.country
+      ? `${location.name}, ${location.country}`
+      : location.name,
     temperature: Math.round(currentWeather.main.temp),
     minTemperature: Math.round(currentWeather.main.temp_min),
     maxTemperature: Math.round(currentWeather.main.temp_max),
@@ -165,20 +172,64 @@ function mapCurrentWeatherToCityWeather(
   };
 }
 
+function mapForecastItemToHourlyForecast(
+  item: OpenWeatherForecastResponse['list'][number],
+  timezone: number,
+  index: number,
+  shouldShowNowLabel: boolean,
+): HourlyForecast {
+  const weather = item.weather[0];
+
+  return {
+    id: `${item.dt}-${index}`,
+    dateKey: formatDateKey(item.dt, timezone),
+    time:
+      index === 0 && shouldShowNowLabel
+        ? 'Agora'
+        : formatTime(item.dt, timezone),
+    temperature: Math.round(item.main.temp),
+    condition: capitalizeFirstLetter(weather.description),
+    icon: getWeatherIcon(weather.main, weather.icon),
+  };
+}
+
 function mapHourlyForecast(
   forecast: OpenWeatherForecastResponse,
 ): HourlyForecast[] {
-  return forecast.list.slice(0, 5).map((item, index) => {
-    const weather = item.weather[0];
+  const shouldShowNowLabel = forecast.list[0]
+    ? isTodayForecast(forecast.list[0].dt, forecast.city.timezone)
+    : false;
 
-    return {
-      id: `${item.dt}-${index}`,
-      time: index === 0 ? 'Agora' : formatTime(item.dt, forecast.city.timezone),
-      temperature: Math.round(item.main.temp),
-      condition: capitalizeFirstLetter(weather.description),
-      icon: getWeatherIcon(weather.main, weather.icon),
-    };
-  });
+  return forecast.list
+    .slice(0, 5)
+    .map((item, index) =>
+      mapForecastItemToHourlyForecast(
+        item,
+        forecast.city.timezone,
+        index,
+        shouldShowNowLabel,
+      ),
+    );
+}
+
+function getRepresentativeForecastItem(
+  items: OpenWeatherForecastResponse['list'],
+  timezone: number,
+) {
+  return (
+    items.find((item) => formatTime(item.dt, timezone).startsWith('12')) ??
+    items[Math.floor(items.length / 2)]
+  );
+}
+
+function getDailyTemperatureForecastItem(
+  items: OpenWeatherForecastResponse['list'],
+  timezone: number,
+) {
+  return (
+    items.find((item) => formatTime(item.dt, timezone).startsWith('00')) ??
+    items[0]
+  );
 }
 
 function mapDailyForecast(
@@ -199,8 +250,17 @@ function mapDailyForecast(
   return Array.from(groupedForecast.entries())
     .slice(0, 6)
     .map(([dateKey, items]) => {
-      const firstItem = items[0];
-      const weather = firstItem.weather[0];
+      const representativeItem = getRepresentativeForecastItem(
+        items,
+        forecast.city.timezone,
+      );
+
+      const dailyTemperatureItem = getDailyTemperatureForecastItem(
+        items,
+        forecast.city.timezone,
+      );
+
+      const weather = representativeItem.weather[0];
 
       const minTemperature = Math.min(
         ...items.map((item) => item.main.temp_min),
@@ -210,13 +270,30 @@ function mapDailyForecast(
         ...items.map((item) => item.main.temp_max),
       );
 
+      const shouldShowNowLabel = isTodayForecast(
+        items[0].dt,
+        forecast.city.timezone,
+      );
+
       return {
         id: dateKey,
-        day: formatDayLabel(firstItem.dt, forecast.city.timezone),
+        dateKey,
+        day: formatDayLabel(representativeItem.dt, forecast.city.timezone),
+        temperature: Math.round(dailyTemperatureItem.main.temp),
         minTemperature: Math.round(minTemperature),
         maxTemperature: Math.round(maxTemperature),
         condition: capitalizeFirstLetter(weather.description),
         icon: getWeatherIcon(weather.main, weather.icon),
+        hourlyForecast: items
+          .slice(0, 5)
+          .map((item, index) =>
+            mapForecastItemToHourlyForecast(
+              item,
+              forecast.city.timezone,
+              index,
+              shouldShowNowLabel,
+            ),
+          ),
       };
     });
 }

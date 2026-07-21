@@ -1,5 +1,6 @@
 export type HourlyForecast = {
   id: string;
+  dateKey: string;
   time: string;
   temperature: number;
   condition: string;
@@ -8,11 +9,14 @@ export type HourlyForecast = {
 
 export type DailyForecast = {
   id: string;
+  dateKey: string;
   day: string;
+  temperature: number;
   minTemperature: number;
   maxTemperature: number;
   condition: string;
   icon: string;
+  hourlyForecast: HourlyForecast[];
 };
 
 export type WeatherDetails = {
