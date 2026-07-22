@@ -25,6 +25,7 @@ body {
 
   .app-screen {
     @apply min-h-dvh w-full overflow-hidden px-[clamp(20px,6vw,32px)] py-[clamp(32px,7dvh,56px)];
+    height: 100dvh;
   }
 
   .app-mobile-container {
