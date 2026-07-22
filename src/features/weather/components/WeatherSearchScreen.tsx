@@ -4,6 +4,7 @@ import { searchCityWeatherList } from '../services/weatherService';
 import { ApiErrorState } from './ApiErrorState';
 import { CityNotFoundState } from './CityNotFoundState';
 import { CityWeatherCard } from './CityWeatherCard';
+import { WeatherSearchSkeleton } from './WeatherSkeletons';
 
 type WeatherSearchScreenProps = {
   onSelectCity?: (weather: CityWeather) => void;
@@ -122,13 +123,7 @@ export function WeatherSearchScreen({
             </h1>
 
             {isLoading ? (
-              <p
-                role="status"
-                aria-live="polite"
-                className="mt-6 rounded-2xl bg-white/90 px-5 py-4 text-center text-sm font-medium text-[#4596F0]"
-              >
-                Buscando previsão...
-              </p>
+              <WeatherSearchSkeleton />
             ) : citiesWeather.length > 0 ? (
               <div className="mt-[clamp(16px,3dvh,24px)] grid gap-[clamp(12px,2dvh,16px)]">
                 {citiesWeather.map((weather) => (

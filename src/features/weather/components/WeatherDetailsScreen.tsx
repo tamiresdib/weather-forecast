@@ -3,6 +3,10 @@ import type { CityWeather } from '../../types/cityWeather';
 import type { WeatherDetails } from '../../types/weatherDetails';
 import { getWeatherDetailsByCoordinates } from '../services/weatherService';
 import { ApiErrorState } from './ApiErrorState';
+import {
+  WeatherConditionsSkeleton,
+  WeatherDetailsSkeleton,
+} from './WeatherSkeletons';
 
 type WeatherDetailsScreenProps = {
   selectedCity: CityWeather;
@@ -166,13 +170,7 @@ export function WeatherDetailsScreen({
 
         <div className="app-mobile-container shrink-0 pt-[clamp(72px,11dvh,92px)]">
           {isLoading ? (
-            <p
-              role="status"
-              aria-live="polite"
-              className="mt-8 rounded-2xl bg-white/90 px-5 py-4 text-center text-sm font-medium text-[#4596F0]"
-            >
-              Buscando detalhes da previsão...
-            </p>
+            <WeatherDetailsSkeleton />
           ) : weatherDetails ? (
             <header className="pb-[clamp(14px,3dvh,24px)] text-center text-white">
               <p className="text-[clamp(14px,3.8vw,17px)] font-medium">
@@ -207,7 +205,9 @@ export function WeatherDetailsScreen({
               Condições
             </h2>
 
-            {weatherDetails ? (
+            {isLoading ? (
+              <WeatherConditionsSkeleton />
+            ) : weatherDetails ? (
               <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
                 <section
                   aria-labelledby="hourly-forecast-title"
