@@ -20,7 +20,7 @@ body {
 
 @layer components {
   .app-background {
-    @apply min-h-dvh w-full overflow-x-hidden bg-gradient-to-b from-[#005195] via-[#2f80c8] to-[#c4d8e8];
+    @apply min-h-dvh w-full bg-gradient-to-b from-[#005195] via-[#2f80c8] to-[#c4d8e8] overflow-hidden;
   }
 
   .app-screen {
