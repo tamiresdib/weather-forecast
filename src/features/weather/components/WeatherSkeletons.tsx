@@ -70,13 +70,14 @@ export function WeatherConditionsSkeleton() {
 
         <div className="mt-2 grid h-[calc(100%-22px)] grid-rows-6">
           {Array.from({ length: 6 }).map((_, index) => (
-            <div
-              key={index}
-              className="grid min-h-0 grid-cols-[1fr_36px_88px] items-center border-b border-white/30 last:border-b-0"
-            >
-              <div className="h-4 w-12 rounded-full bg-white/35" />
-              <div className="mx-auto h-5 w-5 rounded-full bg-white/30" />
-              <div className="ml-auto h-4 w-16 rounded-full bg-white/35" />
+            <div key={index} className="flex min-h-0 flex-col">
+              <div className="grid min-h-0 flex-1 grid-cols-[minmax(64px,1fr)_36px_minmax(82px,92px)] items-center px-2 py-0.5">
+                <div className="h-4 w-12 rounded-full bg-white/35" />
+                <div className="mx-auto h-[clamp(16px,4.6vw,22px)] w-[clamp(16px,4.6vw,22px)] rounded-full bg-white/30" />
+                <div className="ml-auto h-4 w-16 rounded-full bg-white/35" />
+              </div>
+
+              {index < 5 ? <div className="h-px w-full bg-white/30" /> : null}
             </div>
           ))}
         </div>

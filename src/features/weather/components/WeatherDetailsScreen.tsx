@@ -200,7 +200,7 @@ export function WeatherDetailsScreen({
         </div>
 
         <div className="min-h-0 flex-1 rounded-t-[44px] bg-white pt-4">
-          <div className="app-mobile-container flex h-full min-h-0 flex-col">
+          <div className="app-mobile-container flex h-full min-h-0 flex-col px-[clamp(20px,6vw,32px)]">
             <h2 className="flex shrink-0 items-center justify-center gap-2 text-[17px] font-bold text-[#004990]">
               Condições
             </h2>
@@ -211,7 +211,7 @@ export function WeatherDetailsScreen({
               <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
                 <section
                   aria-labelledby="hourly-forecast-title"
-                  className="shrink-0 rounded-[20px] bg-[#4296F0] px-4 py-3 text-white"
+                  className="shrink-0 rounded-[20px] bg-[#4296F0] px-4 py-0.5 text-white"
                 >
                   <div className="flex items-center justify-between border-b border-white/70 pb-2">
                     <h3
@@ -263,39 +263,47 @@ export function WeatherDetailsScreen({
                   <div className="mt-2 grid h-[calc(100%-22px)] grid-rows-6">
                     {weatherDetails.dailyForecast
                       .slice(0, 6)
-                      .map((forecast) => (
-                        <button
+                      .map((forecast, index, forecastList) => (
+                        <div
                           key={forecast.id}
-                          type="button"
-                          onClick={() =>
-                            setSelectedDailyForecastId(forecast.id)
-                          }
-                          aria-label={`Ver detalhes de ${forecast.day}`}
-                          aria-pressed={activeDailyForecastId === forecast.id}
-                          className={`-mx-2 grid min-h-0 grid-cols-[1fr_36px_88px] items-center overflow-hidden rounded-xl border-b border-white/40 px-2 text-left transition-colors last:border-b-0 focus:outline-none ${
-                            activeDailyForecastId === forecast.id
-                              ? 'bg-[#1F75D8]'
-                              : 'bg-transparent hover:bg-[#2F86E8]'
-                          }`}
+                          className="flex min-h-0 flex-col"
                         >
-                          <p className="min-w-0 truncate text-[clamp(14px,3.8vw,16px)] font-bold leading-none">
-                            {forecast.day}
-                          </p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSelectedDailyForecastId(forecast.id)
+                            }
+                            aria-label={`Ver detalhes de ${forecast.day}`}
+                            aria-pressed={activeDailyForecastId === forecast.id}
+                            className={`grid min-h-0 flex-1 grid-cols-[minmax(64px,1fr)_36px_minmax(82px,92px)] items-center rounded-xl px-2 py-0.5 text-left transition-colors focus:outline-none ${
+                              activeDailyForecastId === forecast.id
+                                ? 'bg-[#1F75D8]'
+                                : 'bg-transparent hover:bg-[#2F86E8]'
+                            }`}
+                          >
+                            <p className="min-w-0 truncate text-[clamp(14px,3.8vw,16px)] font-bold leading-none">
+                              {forecast.day}
+                            </p>
 
-                          <div className="flex h-full max-h-[24px] min-h-0 w-9 items-center justify-center overflow-hidden">
-                            <img
-                              src={forecast.icon}
-                              alt=""
-                              aria-hidden="true"
-                              className="block max-h-[22px] w-7 object-contain"
-                            />
-                          </div>
+                            <div className="flex min-h-0 w-9 items-center justify-center justify-self-center">
+                              <img
+                                src={forecast.icon}
+                                alt=""
+                                aria-hidden="true"
+                                className="block h-[clamp(16px,4.6vw,22px)] w-[clamp(16px,4.6vw,22px)] object-contain"
+                              />
+                            </div>
 
-                          <p className="min-w-0 whitespace-nowrap text-right text-[clamp(14px,3.8vw,16px)] font-semibold leading-none">
-                            {forecast.minTemperature}° /{' '}
-                            {forecast.maxTemperature}°
-                          </p>
-                        </button>
+                            <p className="min-w-0 whitespace-nowrap text-right text-[clamp(14px,3.8vw,16px)] font-semibold leading-none">
+                              {forecast.minTemperature}° /{' '}
+                              {forecast.maxTemperature}°
+                            </p>
+                          </button>
+
+                          {index < forecastList.length - 1 ? (
+                            <div className="h-px w-full bg-white/40" />
+                          ) : null}
+                        </div>
                       ))}
                   </div>
                 </section>

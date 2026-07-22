@@ -6,6 +6,7 @@ export type CityWeather = {
   minTemperature: number;
   maxTemperature: number;
   condition: string;
+  icon: string;
   time: string;
   lat: number;
   lon: number;
