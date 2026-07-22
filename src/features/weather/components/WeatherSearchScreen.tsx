@@ -94,7 +94,7 @@ export function WeatherSearchScreen({
         {hasApiError ? (
           <ApiErrorState onRetry={handleRetryApiRequest} />
         ) : (
-          <div className="flex h-full min-h-0 flex-col">
+          <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden">
             <div role="search" className="relative">
               <label htmlFor="city-search" className="sr-only">
                 Buscar cidade
@@ -137,7 +137,7 @@ export function WeatherSearchScreen({
               Tempo
             </h1>
 
-            <div className="min-h-0 flex-1">
+            <div className="min-h-0 flex-1 overflow-hidden">
               {isLoading ? (
                 <WeatherSearchSkeleton />
               ) : citiesWeather.length > 0 ? (
