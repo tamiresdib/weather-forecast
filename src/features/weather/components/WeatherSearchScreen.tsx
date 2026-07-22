@@ -94,7 +94,7 @@ export function WeatherSearchScreen({
         {hasApiError ? (
           <ApiErrorState onRetry={handleRetryApiRequest} />
         ) : (
-          <>
+          <div className="flex h-full min-h-0 flex-col">
             <div role="search" className="relative">
               <label htmlFor="city-search" className="sr-only">
                 Buscar cidade
@@ -137,22 +137,24 @@ export function WeatherSearchScreen({
               Tempo
             </h1>
 
-            {isLoading ? (
-              <WeatherSearchSkeleton />
-            ) : citiesWeather.length > 0 ? (
-              <div className="mt-[clamp(16px,3dvh,24px)] grid gap-[clamp(12px,2dvh,16px)]">
-                {citiesWeather.map((weather) => (
-                  <CityWeatherCard
-                    key={weather.id}
-                    weather={weather}
-                    onClick={onSelectCity}
-                  />
-                ))}
-              </div>
-            ) : searchTerm.trim() ? (
-              <CityNotFoundState onRetry={handleClearSearch} />
-            ) : null}
-          </>
+            <div className="min-h-0 flex-1">
+              {isLoading ? (
+                <WeatherSearchSkeleton />
+              ) : citiesWeather.length > 0 ? (
+                <div className="mt-[clamp(16px,3dvh,24px)] grid gap-[clamp(12px,2dvh,16px)]">
+                  {citiesWeather.map((weather) => (
+                    <CityWeatherCard
+                      key={weather.id}
+                      weather={weather}
+                      onClick={onSelectCity}
+                    />
+                  ))}
+                </div>
+              ) : searchTerm.trim() ? (
+                <CityNotFoundState onRetry={handleClearSearch} />
+              ) : null}
+            </div>
+          </div>
         )}
       </section>
     </main>

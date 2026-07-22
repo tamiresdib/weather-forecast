@@ -8,18 +8,18 @@ export function CityNotFoundState({ onRetry }: CityNotFoundStateProps) {
   return (
     <section
       aria-labelledby="city-not-found-title"
-      className="flex min-h-[60dvh] flex-col items-center justify-center text-center"
+      className="flex h-full min-h-0 flex-col items-center justify-center text-center"
     >
       <img
         src={cityNotFoundImage}
         alt=""
         aria-hidden="true"
-        className="mt-4 w-full max-w-[260px]"
+        className="w-full max-w-[clamp(180px,58vw,240px)]"
       />
 
       <h2
         id="city-not-found-title"
-        className="text-[clamp(22px,6vw,28px)] font-bold leading-tight text-white"
+        className="mt-3 text-[clamp(20px,5.6vw,26px)] font-bold leading-tight text-white"
       >
         Nenhuma cidade encontrada
       </h2>
@@ -32,7 +32,7 @@ export function CityNotFoundState({ onRetry }: CityNotFoundStateProps) {
       <button
         type="button"
         onClick={onRetry}
-        className="mt-8 min-h-12 w-full max-w-[280px] rounded-full bg-white px-6 text-base font-bold text-[#4596F0]"
+        className="mt-6 min-h-11 w-full max-w-[280px] rounded-full bg-white px-6 text-base font-bold text-[#4596F0]"
       >
         Tentar novamente
       </button>
