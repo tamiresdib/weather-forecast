@@ -1,4 +1,8 @@
 import type { CityWeather } from '../../types/cityWeather';
+import rainIcon from '../../../assets/images/Chuva.svg';
+import sunnyIcon from '../../../assets/images/Ensolarado.svg';
+import cloudyIcon from '../../../assets/images/Nublado.svg';
+import windyIcon from '../../../assets/images/windy_color.svg';
 
 export const cityWeatherMock: CityWeather[] = [
   {
@@ -9,6 +13,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 18,
     maxTemperature: 25,
     condition: 'Chuva fraca',
+    icon: rainIcon,
     time: '04:51',
     lat: -23.5505,
     lon: -46.6333,
@@ -21,6 +26,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 18,
     maxTemperature: 25,
     condition: 'Chuva fraca',
+    icon: rainIcon,
     time: '04:51',
     lat: -15.7939,
     lon: -47.8828,
@@ -33,6 +39,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 24,
     maxTemperature: 34,
     condition: 'Ensolarado',
+    icon: sunnyIcon,
     time: '04:51',
     lat: -8.8137,
     lon: -36.9541,
@@ -45,6 +52,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 23,
     maxTemperature: 31,
     condition: 'Pouco nublado',
+    icon: cloudyIcon,
     time: '04:51',
     lat: -3.119,
     lon: -60.0217,
@@ -57,6 +65,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 20,
     maxTemperature: 27,
     condition: 'Ventos fortes',
+    icon: windyIcon,
     time: '04:51',
     lat: -23.9608,
     lon: -46.3336,

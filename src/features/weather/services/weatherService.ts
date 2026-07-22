@@ -165,6 +165,7 @@ function mapCurrentWeatherToCityWeather(
     minTemperature: Math.round(currentWeather.main.temp_min),
     maxTemperature: Math.round(currentWeather.main.temp_max),
     condition: capitalizeFirstLetter(weather.description),
+    icon: getWeatherIcon(weather.main, weather.icon),
     time: formatTime(currentWeather.dt, currentWeather.timezone),
     lat: location.lat,
     lon: location.lon,
@@ -231,8 +232,37 @@ function getDailyTemperatureForecastItem(
   );
 }
 
+function mapCurrentWeatherToTodayForecast(
+  selectedCity: CityWeather,
+  todayKey: string,
+): DailyForecast {
+  const currentHourlyForecast = [
+    {
+      id: `${todayKey}-now`,
+      dateKey: todayKey,
+      time: 'Agora',
+      temperature: selectedCity.temperature,
+      condition: selectedCity.condition,
+      icon: selectedCity.icon,
+    },
+  ];
+
+  return {
+    id: todayKey,
+    dateKey: todayKey,
+    day: 'Hoje',
+    temperature: selectedCity.temperature,
+    minTemperature: selectedCity.minTemperature,
+    maxTemperature: selectedCity.maxTemperature,
+    condition: selectedCity.condition,
+    icon: selectedCity.icon,
+    hourlyForecast: currentHourlyForecast,
+  };
+}
+
 function mapDailyForecast(
   forecast: OpenWeatherForecastResponse,
+  selectedCity: CityWeather,
 ): DailyForecast[] {
   const groupedForecast = new Map<
     string,
@@ -246,9 +276,10 @@ function mapDailyForecast(
     groupedForecast.set(dateKey, [...currentItems, item]);
   });
 
-  return Array.from(groupedForecast.entries())
-    .slice(0, 6)
-    .map(([dateKey, items]) => {
+  const todayKey = formatDateKey(Date.now() / 1000, forecast.city.timezone);
+
+  const dailyForecast = Array.from(groupedForecast.entries()).map(
+    ([dateKey, items]) => {
       const representativeItem = getRepresentativeForecastItem(
         items,
         forecast.city.timezone,
@@ -292,9 +323,23 @@ function mapDailyForecast(
               index,
               shouldShowNowLabel,
             ),
-          ),
+        ),
       };
-    });
+    },
+  );
+
+  const hasTodayForecast = dailyForecast.some(
+    (forecastItem) => forecastItem.dateKey === todayKey,
+  );
+
+  if (hasTodayForecast) {
+    return dailyForecast.slice(0, 6);
+  }
+
+  return [
+    mapCurrentWeatherToTodayForecast(selectedCity, todayKey),
+    ...dailyForecast,
+  ].slice(0, 6);
 }
 
 export async function searchCityWeatherList(
@@ -331,6 +376,6 @@ export async function getWeatherDetailsByCoordinates(
     condition: selectedCity.condition,
     time: selectedCity.time,
     hourlyForecast: mapHourlyForecast(forecast),
-    dailyForecast: mapDailyForecast(forecast),
+    dailyForecast: mapDailyForecast(forecast, selectedCity),
   };
 }
