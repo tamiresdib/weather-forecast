@@ -172,7 +172,7 @@ export function WeatherDetailsScreen({
           {isLoading ? (
             <WeatherDetailsSkeleton />
           ) : weatherDetails ? (
-            <header className="pb-[clamp(14px,3dvh,24px)] text-center text-white">
+            <header className="pb-[clamp(22px,4.5dvh,36px)] text-center text-white">
               <p className="text-[clamp(14px,3.8vw,17px)] font-medium">
                 {weatherDetails.locationLabel}
               </p>
@@ -199,7 +199,7 @@ export function WeatherDetailsScreen({
           ) : null}
         </div>
 
-        <div className="min-h-0 flex-1 rounded-t-[44px] bg-white pt-4">
+        <div className="min-h-0 flex-1 rounded-t-[44px] bg-white pt-3">
           <div className="app-mobile-container flex h-full min-h-0 flex-col px-[clamp(20px,6vw,32px)]">
             <h2 className="flex shrink-0 items-center justify-center gap-2 text-[17px] font-bold text-[#004990]">
               Condições
@@ -211,7 +211,7 @@ export function WeatherDetailsScreen({
               <div className="mt-3 flex min-h-0 flex-1 flex-col gap-3">
                 <section
                   aria-labelledby="hourly-forecast-title"
-                  className="shrink-0 rounded-[20px] bg-[#4296F0] px-4 py-0.5 text-white"
+                  className="shrink-0 rounded-[20px] bg-[#4296F0] px-4 py-3 text-white"
                 >
                   <div className="flex items-center justify-between border-b border-white/70 pb-2">
                     <h3
@@ -224,13 +224,13 @@ export function WeatherDetailsScreen({
                     <p className="text-base font-medium">Julho</p>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-5 gap-2">
+                  <div className="mt-2 grid grid-cols-5 gap-1">
                     {activeHourlyForecast?.map((forecast) => (
                       <article
                         key={forecast.id}
                         className="flex min-w-0 flex-col items-center text-center"
                       >
-                        <p className="text-[10px] font-medium leading-tight">
+                        <p className="max-w-full truncate text-[clamp(8px,2.4vw,10px)] font-medium leading-tight">
                           {forecast.time}
                         </p>
 
@@ -238,10 +238,10 @@ export function WeatherDetailsScreen({
                           src={forecast.icon}
                           alt=""
                           aria-hidden="true"
-                          className="mt-2 h-7 w-7 object-contain"
+                          className="mt-1.5 h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] object-contain"
                         />
 
-                        <p className="mt-1 text-[10px] font-semibold leading-tight">
+                        <p className="mt-1 text-[clamp(8px,2.4vw,10px)] font-semibold leading-tight">
                           {forecast.temperature}°
                         </p>
                       </article>

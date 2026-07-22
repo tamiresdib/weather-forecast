@@ -31,7 +31,7 @@ export function WeatherDetailsSkeleton() {
     <div
       role="status"
       aria-label="Carregando detalhes da previsão"
-      className="animate-pulse pb-[clamp(14px,3dvh,24px)] text-center"
+      className="animate-pulse pb-[clamp(22px,4.5dvh,36px)] text-center"
     >
       <div className="mx-auto h-4 w-32 rounded-full bg-white/40" />
       <div className="mx-auto mt-3 h-8 w-44 rounded-full bg-white/45" />
@@ -54,11 +54,11 @@ export function WeatherConditionsSkeleton() {
           <div className="h-4 w-16 rounded-full bg-white/35" />
         </div>
 
-        <div className="mt-3 grid grid-cols-5 gap-2">
+        <div className="mt-2 grid grid-cols-5 gap-1">
           {Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="flex min-w-0 flex-col items-center">
-              <div className="h-2.5 w-7 rounded-full bg-white/35" />
-              <div className="mt-2 h-7 w-7 rounded-full bg-white/30" />
+              <div className="h-2.5 w-6 rounded-full bg-white/35" />
+              <div className="mt-1.5 h-[clamp(18px,5vw,24px)] w-[clamp(18px,5vw,24px)] rounded-full bg-white/30" />
               <div className="mt-1 h-2.5 w-5 rounded-full bg-white/35" />
             </div>
           ))}
