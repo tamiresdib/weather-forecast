@@ -20,7 +20,6 @@ export function WeatherSearchScreen({
   const [citiesWeather, setCitiesWeather] = useState<CityWeather[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasApiError, setHasApiError] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let isActive = true;
@@ -60,14 +59,30 @@ export function WeatherSearchScreen({
       isActive = false;
       window.clearTimeout(timeoutId);
     };
-  }, [searchTerm, retryCount]);
+  }, [searchTerm]);
 
   function handleClearSearch() {
     setSearchTerm('');
   }
 
-  function handleRetryApiRequest() {
-    setRetryCount((currentRetryCount) => currentRetryCount + 1);
+  async function handleRetryApiRequest() {
+    const cityName = searchTerm.trim() || DEFAULT_CITY_NAME;
+
+    setIsLoading(true);
+    setHasApiError(false);
+
+    try {
+      const weatherList = await searchCityWeatherList(cityName);
+
+      setCitiesWeather(weatherList);
+    } catch (error) {
+      console.error('Weather search failed:', error);
+
+      setCitiesWeather([]);
+      setHasApiError(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
