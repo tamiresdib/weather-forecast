@@ -91,6 +91,22 @@ async function runScheduledEffects() {
   });
 }
 
+function createDeferredPromise<T>() {
+  let resolvePromise!: (value: T) => void;
+  let rejectPromise!: (reason?: unknown) => void;
+
+  const promise = new Promise<T>((resolve, reject) => {
+    resolvePromise = resolve;
+    rejectPromise = reject;
+  });
+
+  return {
+    promise,
+    reject: rejectPromise,
+    resolve: resolvePromise,
+  };
+}
+
 describe('useWeatherDetails', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -139,6 +155,46 @@ describe('useWeatherDetails', () => {
     );
   });
 
+  it('falls back to the first daily forecast when the selected daily forecast does not exist', async () => {
+    const { result } = renderHook(() => useWeatherDetails(selectedCityMock));
+
+    await runScheduledEffects();
+
+    act(() => {
+      result.current.setSelectedDailyForecastId('unknown-day');
+    });
+
+    expect(result.current.activeDailyForecastId).toBe('today');
+    expect(result.current.activeDailyForecast).toEqual(
+      weatherDetailsMock.dailyForecast[0],
+    );
+  });
+
+  it('returns null active daily forecast when the selected forecast does not exist and the daily list is empty', async () => {
+    const weatherDetailsWithoutDailyForecast: WeatherDetails = {
+      ...weatherDetailsMock,
+      dailyForecast: [],
+    };
+
+    vi.mocked(getWeatherDetailsByCoordinates).mockResolvedValue(
+      weatherDetailsWithoutDailyForecast,
+    );
+
+    const { result } = renderHook(() => useWeatherDetails(selectedCityMock));
+
+    await runScheduledEffects();
+
+    act(() => {
+      result.current.setSelectedDailyForecastId('unknown-day');
+    });
+
+    expect(result.current.activeDailyForecast).toBeNull();
+    expect(result.current.activeDailyForecastId).toBeUndefined();
+    expect(result.current.activeTemperature).toBe(
+      weatherDetailsWithoutDailyForecast.currentTemperature,
+    );
+  });
+
   it('sets the API error state when details request fails', async () => {
     vi.mocked(getWeatherDetailsByCoordinates).mockRejectedValue(
       new Error('API error'),
@@ -169,5 +225,56 @@ describe('useWeatherDetails', () => {
 
     expect(result.current.hasApiError).toBe(false);
     expect(result.current.weatherDetails).toEqual(weatherDetailsMock);
+  });
+
+  it('does not update weather details when the request resolves after unmount', async () => {
+    const deferredWeatherDetails = createDeferredPromise<WeatherDetails>();
+
+    vi.mocked(getWeatherDetailsByCoordinates).mockReturnValue(
+      deferredWeatherDetails.promise,
+    );
+
+    const { unmount } = renderHook(() => useWeatherDetails(selectedCityMock));
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    unmount();
+
+    await act(async () => {
+      deferredWeatherDetails.resolve(weatherDetailsMock);
+      await deferredWeatherDetails.promise;
+    });
+
+    expect(getWeatherDetailsByCoordinates).toHaveBeenCalledWith(
+      selectedCityMock,
+    );
+  });
+
+  it('does not update API error state when the request rejects after unmount', async () => {
+    const deferredWeatherDetails = createDeferredPromise<WeatherDetails>();
+
+    vi.mocked(getWeatherDetailsByCoordinates).mockReturnValue(
+      deferredWeatherDetails.promise,
+    );
+
+    const { unmount } = renderHook(() => useWeatherDetails(selectedCityMock));
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    unmount();
+
+    await act(async () => {
+      deferredWeatherDetails.reject(new Error('API error'));
+
+      await expect(deferredWeatherDetails.promise).rejects.toThrow('API error');
+    });
+
+    expect(getWeatherDetailsByCoordinates).toHaveBeenCalledWith(
+      selectedCityMock,
+    );
   });
 });
