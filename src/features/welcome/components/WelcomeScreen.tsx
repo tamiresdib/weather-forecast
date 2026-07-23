@@ -1,4 +1,4 @@
-import sunIcon from '../../../assets/images/sun-icon1.svg';
+import sunIcon from '../../../assets/images/sun-icon1.webp';
 
 type WelcomeScreenProps = {
   onStart?: () => void;
