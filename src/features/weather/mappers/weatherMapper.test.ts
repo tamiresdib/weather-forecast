@@ -114,6 +114,39 @@ describe('weatherMapper', () => {
     );
   });
 
+  it('uses the city name as location label when the country is not available', () => {
+    const locationWithoutCountry: OpenWeatherLocation = {
+      ...locationMock,
+      country: '',
+      state: undefined,
+    };
+
+    const currentWeather: OpenWeatherCurrentResponse = {
+      dt: createTimestamp(2026, 7, 21, 15),
+      timezone: SAO_PAULO_TIMEZONE,
+      name: 'São Paulo',
+      main: {
+        temp: 20.4,
+        temp_min: 18.2,
+        temp_max: 25.1,
+      },
+      weather: [
+        {
+          main: 'Rain',
+          description: 'chuva fraca',
+          icon: '10d',
+        },
+      ],
+    };
+
+    expect(
+      mapCurrentWeatherToCityWeather(locationWithoutCountry, currentWeather),
+    ).toMatchObject({
+      id: 'São Paulo-',
+      locationLabel: 'São Paulo',
+    });
+  });
+
   it('maps the forecast response to weather details grouped by day', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-07-21T15:00:00.000Z'));
@@ -244,6 +277,99 @@ describe('weatherMapper', () => {
       day: 'Qua.',
       temperature: 15,
       icon: sunnyIcon,
+    });
+
+    vi.useRealTimers();
+  });
+
+  it('maps an empty forecast list without hourly or daily forecast items', () => {
+    const forecast: OpenWeatherForecastResponse = {
+      city: {
+        name: 'São Paulo',
+        country: 'BR',
+        timezone: SAO_PAULO_TIMEZONE,
+      },
+      list: [],
+    };
+
+    const weatherDetails = mapForecastToWeatherDetails(
+      forecast,
+      selectedCityMock,
+    );
+
+    expect(weatherDetails.hourlyForecast).toEqual([]);
+    expect(weatherDetails.dailyForecast).toEqual([
+      expect.objectContaining({
+        day: 'Hoje',
+        temperature: selectedCityMock.temperature,
+      }),
+    ]);
+  });
+
+  it('uses fallback forecast items when a day does not have 00:00 or 12:00 entries', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-21T15:00:00.000Z'));
+
+    const forecast: OpenWeatherForecastResponse = {
+      city: {
+        name: 'São Paulo',
+        country: 'BR',
+        timezone: SAO_PAULO_TIMEZONE,
+      },
+      list: [
+        createForecastItem({
+          day: 21,
+          hour: 15,
+          temp: 20.4,
+          min: 18.2,
+          max: 22.1,
+          main: 'Rain',
+          description: 'chuva fraca',
+          icon: '10d',
+        }),
+        createForecastItem({
+          day: 22,
+          hour: 9,
+          temp: 21.2,
+          min: 19.4,
+          max: 23.1,
+          main: 'Clear',
+          description: 'céu limpo',
+          icon: '01d',
+        }),
+        createForecastItem({
+          day: 22,
+          hour: 18,
+          temp: 27.6,
+          min: 24.2,
+          max: 29.4,
+          main: 'Clouds',
+          description: 'nublado',
+          icon: '03d',
+        }),
+        createForecastItem({
+          day: 22,
+          hour: 21,
+          temp: 22.1,
+          min: 20.1,
+          max: 24.3,
+          main: 'Rain',
+          description: 'chuva moderada',
+          icon: '10n',
+        }),
+      ],
+    };
+
+    const weatherDetails = mapForecastToWeatherDetails(
+      forecast,
+      selectedCityMock,
+    );
+
+    expect(weatherDetails.dailyForecast[1]).toMatchObject({
+      day: 'Qua.',
+      temperature: 21,
+      condition: 'Nublado',
+      icon: cloudyIcon,
     });
 
     vi.useRealTimers();
