@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
-import { searchCityWeatherList } from '../services/weatherService';
+import { useWeatherSearch } from '../hooks/useWeatherSearch';
 import { ApiErrorState } from './ApiErrorState';
 import { CityNotFoundState } from './CityNotFoundState';
 import { CityWeatherCard } from './CityWeatherCard';
@@ -10,80 +9,18 @@ type WeatherSearchScreenProps = {
   onSelectCity?: (weather: CityWeather) => void;
 };
 
-const DEFAULT_CITY_NAME = 'São Paulo';
-const SEARCH_DEBOUNCE_IN_MS = 500;
-
 export function WeatherSearchScreen({
   onSelectCity,
 }: WeatherSearchScreenProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [citiesWeather, setCitiesWeather] = useState<CityWeather[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasApiError, setHasApiError] = useState(false);
-
-  useEffect(() => {
-    let isActive = true;
-
-    const cityName = searchTerm.trim() || DEFAULT_CITY_NAME;
-    const debounceTime = searchTerm.trim() ? SEARCH_DEBOUNCE_IN_MS : 0;
-
-    const timeoutId = window.setTimeout(() => {
-      async function loadCityWeather() {
-        setIsLoading(true);
-        setHasApiError(false);
-
-        try {
-          const weatherList = await searchCityWeatherList(cityName);
-
-          if (isActive) {
-            setCitiesWeather(weatherList);
-          }
-        } catch (error) {
-          console.error('Weather search failed:', error);
-
-          if (isActive) {
-            setCitiesWeather([]);
-            setHasApiError(true);
-          }
-        } finally {
-          if (isActive) {
-            setIsLoading(false);
-          }
-        }
-      }
-
-      void loadCityWeather();
-    }, debounceTime);
-
-    return () => {
-      isActive = false;
-      window.clearTimeout(timeoutId);
-    };
-  }, [searchTerm]);
-
-  function handleClearSearch() {
-    setSearchTerm('');
-  }
-
-  async function handleRetryApiRequest() {
-    const cityName = searchTerm.trim() || DEFAULT_CITY_NAME;
-
-    setIsLoading(true);
-    setHasApiError(false);
-
-    try {
-      const weatherList = await searchCityWeatherList(cityName);
-
-      setCitiesWeather(weatherList);
-    } catch (error) {
-      console.error('Weather search failed:', error);
-
-      setCitiesWeather([]);
-      setHasApiError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const {
+    citiesWeather,
+    clearSearch,
+    hasApiError,
+    isLoading,
+    retrySearch,
+    searchTerm,
+    setSearchTerm,
+  } = useWeatherSearch();
 
   return (
     <main className="app-background">
@@ -92,7 +29,7 @@ export function WeatherSearchScreen({
         className="app-screen app-mobile-container"
       >
         {hasApiError ? (
-          <ApiErrorState onRetry={handleRetryApiRequest} />
+          <ApiErrorState onRetry={retrySearch} />
         ) : (
           <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-hidden">
             <div role="search" className="relative">
@@ -121,7 +58,7 @@ export function WeatherSearchScreen({
               {searchTerm ? (
                 <button
                   type="button"
-                  onClick={handleClearSearch}
+                  onClick={clearSearch}
                   aria-label="Limpar busca"
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-[#4596F0]"
                 >
@@ -151,7 +88,7 @@ export function WeatherSearchScreen({
                   ))}
                 </div>
               ) : searchTerm.trim() ? (
-                <CityNotFoundState onRetry={handleClearSearch} />
+                <CityNotFoundState onRetry={clearSearch} />
               ) : null}
             </div>
           </div>
