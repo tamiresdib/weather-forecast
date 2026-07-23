@@ -34,9 +34,7 @@ export function WeatherDetailsScreen({
       const details = await getWeatherDetailsByCoordinates(selectedCity);
 
       setWeatherDetails(details);
-    } catch (error) {
-      console.error('Weather details request failed:', error);
-
+    } catch {
       setWeatherDetails(null);
       setHasApiError(true);
     } finally {
@@ -54,9 +52,7 @@ export function WeatherDetailsScreen({
           setHasApiError(false);
         }
       })
-      .catch((error) => {
-        console.error('Weather details request failed:', error);
-
+      .catch(() => {
         if (isMounted) {
           setWeatherDetails(null);
           setHasApiError(true);
