@@ -1,7 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
-import type { WeatherDetails } from '../../types/weatherDetails';
-import { getWeatherDetailsByCoordinates } from '../services/weatherService';
+import { useWeatherDetails } from '../hooks/useWeatherDetails';
 import { ApiErrorState } from './ApiErrorState';
 import {
   WeatherConditionsSkeleton,
@@ -17,92 +15,20 @@ export function WeatherDetailsScreen({
   selectedCity,
   onBack,
 }: WeatherDetailsScreenProps) {
-  const [weatherDetails, setWeatherDetails] = useState<WeatherDetails | null>(
-    null,
-  );
-  const [selectedDailyForecastId, setSelectedDailyForecastId] = useState<
-    string | null
-  >(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasApiError, setHasApiError] = useState(false);
-
-  async function loadWeatherDetails() {
-    setIsLoading(true);
-    setHasApiError(false);
-
-    try {
-      const details = await getWeatherDetailsByCoordinates(selectedCity);
-
-      setWeatherDetails(details);
-    } catch {
-      setWeatherDetails(null);
-      setHasApiError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    let isMounted = true;
-
-    void getWeatherDetailsByCoordinates(selectedCity)
-      .then((details) => {
-        if (isMounted) {
-          setWeatherDetails(details);
-          setHasApiError(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setWeatherDetails(null);
-          setHasApiError(true);
-        }
-      })
-      .finally(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [selectedCity]);
-
-  const activeDailyForecast = useMemo(() => {
-    if (!weatherDetails) {
-      return null;
-    }
-
-    if (!selectedDailyForecastId) {
-      return weatherDetails.dailyForecast[0] ?? null;
-    }
-
-    return (
-      weatherDetails.dailyForecast.find(
-        (forecast) => forecast.id === selectedDailyForecastId,
-      ) ??
-      weatherDetails.dailyForecast[0] ??
-      null
-    );
-  }, [selectedDailyForecastId, weatherDetails]);
-
-  const activeDailyForecastId = activeDailyForecast?.id;
-
-  const activeHourlyForecast =
-    activeDailyForecast?.hourlyForecast ?? weatherDetails?.hourlyForecast;
-
-  const activeTemperature =
-    activeDailyForecast?.temperature ?? weatherDetails?.currentTemperature;
-
-  const activeMaxTemperature =
-    activeDailyForecast?.maxTemperature ?? weatherDetails?.maxTemperature;
-
-  const activeMinTemperature =
-    activeDailyForecast?.minTemperature ?? weatherDetails?.minTemperature;
-
-  const activeCondition =
-    activeDailyForecast?.condition ?? weatherDetails?.condition;
+  const {
+    activeCondition,
+    activeDailyForecast,
+    activeDailyForecastId,
+    activeHourlyForecast,
+    activeMaxTemperature,
+    activeMinTemperature,
+    activeTemperature,
+    hasApiError,
+    isLoading,
+    retryWeatherDetails,
+    setSelectedDailyForecastId,
+    weatherDetails,
+  } = useWeatherDetails(selectedCity);
 
   if (hasApiError) {
     return (
@@ -130,7 +56,7 @@ export function WeatherDetailsScreen({
             </svg>
           </button>
 
-          <ApiErrorState onRetry={loadWeatherDetails} />
+          <ApiErrorState onRetry={retryWeatherDetails} />
         </section>
       </main>
     );
