@@ -40,7 +40,9 @@ async function fetchOpenWeather<T>(
   return response.json() as Promise<T>;
 }
 
-export async function fetchCityLocation(cityName: string) {
+export async function fetchCityLocation(
+  cityName: string,
+): Promise<OpenWeatherLocation | undefined> {
   const normalizedCityName = cityName.trim();
 
   const locations = await fetchOpenWeather<OpenWeatherLocation[]>(
