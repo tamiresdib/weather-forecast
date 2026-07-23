@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1784836512229" clover="3.2.0">
+  <project timestamp="1784836512230" name="All files">
+    <metrics statements="138" coveredstatements="138" conditionals="69" coveredconditionals="57" methods="45" coveredmethods="45" elements="252" coveredelements="240" complexity="0" loc="138" ncloc="138" packages="5" files="11" classes="11"/>
+    <package name="assets.images">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="Chuva.svg" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/assets/images/Chuva.svg">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="Ensolarado.svg" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/assets/images/Ensolarado.svg">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="Inicio da Noite.svg" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/assets/images/Inicio da Noite.svg">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="Noite.svg" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/assets/images/Noite.svg">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+      <file name="Nublado.svg" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/assets/images/Nublado.svg">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+    <package name="features.weather.hooks">
+      <metrics statements="65" coveredstatements="65" conditionals="37" coveredconditionals="28" methods="18" coveredmethods="18"/>
+      <file name="useWeatherDetails.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/hooks/useWeatherDetails.ts">
+        <metrics statements="32" coveredstatements="32" conditionals="26" coveredconditionals="20" methods="8" coveredmethods="8"/>
+        <line num="7" count="10" type="stmt"/>
+        <line num="10" count="10" type="stmt"/>
+        <line num="13" count="10" type="stmt"/>
+        <line num="14" count="10" type="stmt"/>
+        <line num="16" count="10" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="18" count="5" type="stmt"/>
+        <line num="19" count="5" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="24" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="29" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="34" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="42" count="10" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="46" count="8" type="stmt"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="51" count="4" type="stmt"/>
+        <line num="55" count="10" type="stmt"/>
+        <line num="56" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="4" type="stmt"/>
+        <line num="60" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="73" count="10" type="stmt"/>
+      </file>
+      <file name="useWeatherSearch.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/hooks/useWeatherSearch.ts">
+        <metrics statements="33" coveredstatements="33" conditionals="11" coveredconditionals="8" methods="10" coveredmethods="10"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="9" count="15" type="stmt"/>
+        <line num="10" count="15" type="stmt"/>
+        <line num="11" count="15" type="stmt"/>
+        <line num="12" count="15" type="stmt"/>
+        <line num="14" count="15" type="stmt"/>
+        <line num="15" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="20" count="7" type="stmt"/>
+        <line num="22" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="23" count="6" type="stmt"/>
+        <line num="26" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="31" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="32" count="7" type="stmt"/>
+        <line num="39" count="15" type="stmt"/>
+        <line num="40" count="7" type="stmt"/>
+        <line num="42" count="7" type="stmt"/>
+        <line num="43" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="7" type="stmt"/>
+        <line num="46" count="12" type="stmt"/>
+        <line num="49" count="7" type="stmt"/>
+        <line num="50" count="7" type="stmt"/>
+        <line num="51" count="7" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="65" count="15" type="stmt"/>
+        <line num="77" count="8" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="features.weather.mappers">
+      <metrics statements="52" coveredstatements="52" conditionals="26" coveredconditionals="23" methods="20" coveredmethods="20"/>
+      <file name="weatherIconMapper.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/mappers/weatherIconMapper.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="8" coveredconditionals="8" methods="3" coveredmethods="3"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="25" count="23" type="stmt"/>
+        <line num="26" count="23" type="stmt"/>
+        <line num="28" count="23" type="stmt"/>
+        <line num="29" count="62" type="stmt"/>
+        <line num="32" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="7" type="stmt"/>
+        <line num="36" count="16" type="stmt"/>
+        <line num="37" count="23" type="stmt"/>
+        <line num="40" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="41" count="14" type="stmt"/>
+        <line num="43" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="2" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="weatherMapper.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/mappers/weatherMapper.ts">
+        <metrics statements="38" coveredstatements="38" conditionals="18" coveredconditionals="15" methods="17" coveredmethods="17"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="53" count="2" type="stmt"/>
+        <line num="72" count="10" type="stmt"/>
+        <line num="74" count="10" type="stmt"/>
+        <line num="90" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="94" count="2" type="stmt"/>
+        <line num="97" count="5" type="stmt"/>
+        <line num="107" count="3" type="stmt"/>
+        <line num="108" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="117" count="3" type="stmt"/>
+        <line num="118" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="127" count="1" type="stmt"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="155" count="2" type="stmt"/>
+        <line num="157" count="2" type="stmt"/>
+        <line num="158" count="5" type="stmt"/>
+        <line num="159" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="161" count="5" type="stmt"/>
+        <line num="164" count="2" type="stmt"/>
+        <line num="166" count="2" type="stmt"/>
+        <line num="168" count="3" type="stmt"/>
+        <line num="173" count="3" type="stmt"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="180" count="3" type="stmt"/>
+        <line num="181" count="5" type="stmt"/>
+        <line num="184" count="3" type="stmt"/>
+        <line num="185" count="5" type="stmt"/>
+        <line num="188" count="3" type="stmt"/>
+        <line num="193" count="3" type="stmt"/>
+        <line num="205" count="5" type="stmt"/>
+        <line num="216" count="2" type="stmt"/>
+        <line num="217" count="2" type="stmt"/>
+        <line num="220" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="221" count="1" type="stmt"/>
+        <line num="224" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="features.weather.services">
+      <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+      <file name="weatherService.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/services/weatherService.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="features.weather.utils">
+      <metrics statements="14" coveredstatements="14" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
+      <file name="dateUtils.ts" path="/Users/admin/Downloads/weather-forecast/weather-forecast/src/features/weather/utils/dateUtils.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
+        <line num="2" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="6" count="18" type="stmt"/>
+        <line num="10" count="18" type="stmt"/>
+        <line num="18" count="42" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="25" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="38" count="7" type="stmt"/>
+        <line num="39" count="7" type="stmt"/>
+        <line num="41" count="7" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
