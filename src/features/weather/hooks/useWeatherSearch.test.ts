@@ -42,6 +42,22 @@ async function runScheduledEffects() {
   });
 }
 
+function createDeferredPromise<T>() {
+  let resolvePromise!: (value: T) => void;
+  let rejectPromise!: (reason?: unknown) => void;
+
+  const promise = new Promise<T>((resolve, reject) => {
+    resolvePromise = resolve;
+    rejectPromise = reject;
+  });
+
+  return {
+    promise,
+    reject: rejectPromise,
+    resolve: resolvePromise,
+  };
+}
+
 describe('useWeatherSearch', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -148,5 +164,48 @@ describe('useWeatherSearch', () => {
 
     expect(searchCityWeatherList).toHaveBeenCalledWith('Manaus');
     expect(result.current.hasApiError).toBe(false);
+  });
+
+  it('does not update cities when the search request resolves after unmount', async () => {
+    const deferredSearch = createDeferredPromise<CityWeather[]>();
+
+    vi.mocked(searchCityWeatherList).mockReturnValue(deferredSearch.promise);
+
+    const { unmount } = renderHook(() => useWeatherSearch());
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    unmount();
+
+    await act(async () => {
+      deferredSearch.resolve([saoPauloWeatherMock]);
+      await deferredSearch.promise;
+    });
+
+    expect(searchCityWeatherList).toHaveBeenCalledWith('São Paulo');
+  });
+
+  it('does not update API error state when the search request rejects after unmount', async () => {
+    const deferredSearch = createDeferredPromise<CityWeather[]>();
+
+    vi.mocked(searchCityWeatherList).mockReturnValue(deferredSearch.promise);
+
+    const { unmount } = renderHook(() => useWeatherSearch());
+
+    await act(async () => {
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    unmount();
+
+    await act(async () => {
+      deferredSearch.reject(new Error('API error'));
+
+      await expect(deferredSearch.promise).rejects.toThrow('API error');
+    });
+
+    expect(searchCityWeatherList).toHaveBeenCalledWith('São Paulo');
   });
 });

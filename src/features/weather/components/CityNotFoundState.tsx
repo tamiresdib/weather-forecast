@@ -1,4 +1,4 @@
-import cityNotFoundImage from '../../../assets/images/city-not-found.svg';
+import cityNotFoundImage from '../../../assets/images/city-not-found.webp';
 
 type CityNotFoundStateProps = {
   onRetry: () => void;

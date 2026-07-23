@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import apiErrorImage from '../../../assets/images/error-api-img.svg';
+import apiErrorImage from '../../../assets/images/error-api-img.webp';
 
 type ApiErrorStateProps = {
   onRetry: () => void | Promise<void>;
