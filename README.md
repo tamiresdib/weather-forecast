@@ -41,11 +41,15 @@ Depois dos rascunhos, as ideias foram refinadas no Figma para validar espaçamen
 
 Rascunho inicial:
 
-![Rascunho inicial do projeto](./src/docs/rascunho-projeto.jpg)
+<img width="542" height="223" alt="Captura de Tela 2026-07-23 às 22 26 07" src="https://github.com/user-attachments/assets/5117e48b-7602-481c-a136-a7766441c157" />
+
 
 Protótipo no Figma:
 
-[Adicionar link do Figma aqui](#)
+<img width="825" height="678" alt="Captura de Tela 2026-07-23 às 22 28 47" src="https://github.com/user-attachments/assets/56d48cb3-ac0b-4d9a-8dfa-6574d91a2d91" />
+
+**Link do Figma:** https://www.figma.com/design/9USg4L5nE8JbviGhUmkqTq/Entrevista-Itau--Copy-?node-id=0-1&t=PdVIJWCQGCrYFmey-1
+
 
 <a id="tecnologias"></a>
 
@@ -229,7 +233,7 @@ O projeto usa a OpenWeather:
 - Current Weather API para clima atual.
 - 5 Day / 3 Hour Forecast API para previsão dos próximos dias.
 
-**Observação importante:** a previsão gratuita da OpenWeather retorna intervalos de 3 em 3 horas. Por isso, os horários exibidos dependem dos dados disponíveis no endpoint.
+**Observação importante:** a previsão gratuita da OpenWeather retorna intervalos de 3 em 3 horas. Por isso, os horários exibidos dependem dos dados disponíveis no endpoint, além disso, nessa versão gratuita não é possível visualizar histórico previsões passadas, apenas futuras.
 
 <a id="testes"></a>
 
