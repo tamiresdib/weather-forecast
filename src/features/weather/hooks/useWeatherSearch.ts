@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
+import { ANALYTICS_COLLECTION_EVENTS } from '../../../shared/analytics/analyticsParameters';
+import {
+  trackCollectionEvent,
+  trackEvent,
+} from '../../../shared/analytics/analyticsService';
 import { searchCityWeatherList } from '../services/weatherService';
 
 const DEFAULT_CITY_NAME = 'São Paulo';
@@ -21,11 +26,25 @@ export function useWeatherSearch() {
 
         if (shouldUpdate()) {
           setCitiesWeather(weatherList);
+          trackEvent('city_search_completed', {
+            city: cityName,
+            result_count: weatherList.length,
+          });
+          trackCollectionEvent(
+            ANALYTICS_COLLECTION_EVENTS.homeSearchButtonClicked,
+            {
+              city: cityName,
+              result_count: weatherList.length,
+            },
+          );
         }
       } catch {
         if (shouldUpdate()) {
           setCitiesWeather([]);
           setHasApiError(true);
+          trackEvent('api_error', {
+            context: 'weather_search',
+          });
         }
       } finally {
         if (shouldUpdate()) {
@@ -53,11 +72,27 @@ export function useWeatherSearch() {
   }, [loadCitiesWeather, searchTerm]);
 
   function clearSearch() {
+    trackEvent('city_search_cleared');
     setSearchTerm('');
+  }
+
+  function handleSearchTermChange(searchValue: string) {
+    if (!searchTerm.trim() && searchValue.trim()) {
+      trackCollectionEvent(ANALYTICS_COLLECTION_EVENTS.homeSearchFieldFilled);
+    }
+
+    setSearchTerm(searchValue);
   }
 
   async function retrySearch() {
     const cityName = getCityNameForSearch(searchTerm);
+
+    trackEvent('city_search_retried', {
+      city: cityName,
+    });
+    trackCollectionEvent(ANALYTICS_COLLECTION_EVENTS.apiErrorRetryClicked, {
+      city: cityName,
+    });
 
     await loadCitiesWeather(cityName);
   }
@@ -69,7 +104,7 @@ export function useWeatherSearch() {
     isLoading,
     retrySearch,
     searchTerm,
-    setSearchTerm,
+    setSearchTerm: handleSearchTermChange,
   };
 }
 

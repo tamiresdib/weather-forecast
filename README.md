@@ -329,15 +329,28 @@ O projeto está publicado na Vercel:
 
 ## Tagueamento
 
-O projeto também está preparado para receber uma camada de analytics/tagueamento. A recomendação é centralizar os eventos em um serviço único, evitando espalhar chamadas de tracking pelos componentes.
+O projeto possui tagueamento via Google Analytics, centralizado em um serviço único para evitar chamadas diretas de analytics espalhadas pelos componentes.
 
-Eventos recomendados:
+Para habilitar o Google Analytics, adicione o Measurement ID no arquivo `.env`:
+
+```env
+VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
+```
+
+Caso essa variável não esteja configurada, a aplicação continua funcionando normalmente sem enviar eventos.
+
+Eventos enviados:
 
 - `welcome_started`
-- `city_searched`
+- `page_view`
+- `city_search_completed`
+- `city_search_cleared`
+- `city_search_retried`
 - `city_selected`
 - `forecast_day_selected`
-- `api_error_retry_clicked`
+- `navigation_back_clicked`
+- `weather_details_retried`
+- `api_error`
 
 <a id="variaveis-de-ambiente"></a>
 
@@ -349,6 +362,7 @@ Use apenas o `.env.example` como referência pública:
 
 ```env
 VITE_OPENWEATHER_API_KEY=your_api_key_here
+VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
 ```
 
 <a id="decisoes-tecnicas"></a>
@@ -360,6 +374,7 @@ VITE_OPENWEATHER_API_KEY=your_api_key_here
 - Hooks customizados para separar regra de UI e regra de carregamento.
 - Mappers para isolar a estrutura da API externa dos modelos internos do app.
 - Services para centralizar a comunicação entre client da API e aplicação.
+- Google Analytics centralizado em uma camada de analytics para evitar acoplamento com os componentes.
 - Vitest e Testing Library para testes rápidos e próximos do ecossistema Vite.
 - WebP para ilustrações grandes e SVG para ícones pequenos.
 
@@ -375,9 +390,6 @@ Implementado:
 - Tratamento de erro.
 - Cidade não encontrada.
 - Testes unitários.
+- Tagueamento com Google Analytics.
 - Otimização de assets.
 - Build para produção.
-
-Próximos passos recomendados:
-
-- Implementar camada real de tagueamento.

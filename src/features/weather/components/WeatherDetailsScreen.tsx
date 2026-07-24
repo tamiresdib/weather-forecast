@@ -1,4 +1,9 @@
 import type { CityWeather } from '../../types/cityWeather';
+import { ANALYTICS_COLLECTION_EVENTS } from '../../../shared/analytics/analyticsParameters';
+import {
+  trackCollectionEvent,
+  trackEvent,
+} from '../../../shared/analytics/analyticsService';
 import { useWeatherDetails } from '../hooks/useWeatherDetails';
 import { ApiErrorState } from './ApiErrorState';
 import { WeatherDetailsLayout } from './WeatherDetailsLayout';
@@ -142,9 +147,20 @@ export function WeatherDetailsScreen({
                       <div key={forecast.id} className="flex min-h-0 flex-col">
                         <button
                           type="button"
-                          onClick={() =>
-                            setSelectedDailyForecastId(forecast.id)
-                          }
+                          onClick={() => {
+                            trackEvent('forecast_day_selected', {
+                              city: weatherDetails.city,
+                              forecast_day: forecast.day,
+                            });
+                            trackCollectionEvent(
+                              ANALYTICS_COLLECTION_EVENTS.detailsNextDaysForecastViewed,
+                              {
+                                city: weatherDetails.city,
+                                forecast_day: forecast.day,
+                              },
+                            );
+                            setSelectedDailyForecastId(forecast.id);
+                          }}
                           aria-label={`Ver detalhes de ${forecast.day}`}
                           aria-pressed={activeDailyForecastId === forecast.id}
                           className={`grid min-h-0 flex-1 grid-cols-[minmax(64px,1fr)_36px_minmax(82px,92px)] items-center rounded-xl px-2 py-0.5 text-left transition-colors focus:outline-none ${
