@@ -1,12 +1,13 @@
-# Weather Forecast
+# Weather Forecast 🌤️
 
 Aplicação web de previsão do tempo desenvolvida em React, TypeScript e Tailwind CSS. O projeto permite buscar uma cidade, visualizar o clima atual e consultar a previsão das próximas horas e dos próximos 5 dias usando a API da OpenWeather.
 
 O foco do projeto é entregar uma experiência simples, responsiva e acessível, com boa organização de código, testes unitários e tratamento de erro.
 
+https://github.com/user-attachments/assets/de6e1895-7be4-43fc-9b39-6e92f7eeebeb
+
 ## Sumário
 
-- [Demonstração](#demonstracao)
 - [Tecnologias](#tecnologias)
 - [Funcionalidades](#funcionalidades)
 - [Requisitos](#requisitos)
@@ -24,12 +25,6 @@ O foco do projeto é entregar uma experiência simples, responsiva e acessível,
 - [Variáveis De Ambiente](#variaveis-de-ambiente)
 - [Decisões Técnicas](#decisoes-tecnicas)
 - [Status Do Projeto](#status-do-projeto)
-
-<a id="demonstracao"></a>
-
-## Demonstração
-
-[Ver vídeo de demonstração](./src/docs/video-do-projeto.mov)
 
 <a id="tecnologias"></a>
 
@@ -213,7 +208,7 @@ O projeto usa a OpenWeather:
 - Current Weather API para clima atual.
 - 5 Day / 3 Hour Forecast API para previsão dos próximos dias.
 
-Observação importante: a previsão gratuita da OpenWeather retorna intervalos de 3 em 3 horas. Por isso, os horários exibidos dependem dos dados disponíveis no endpoint.
+**Observação importante:** a previsão gratuita da OpenWeather retorna intervalos de 3 em 3 horas. Por isso, os horários exibidos dependem dos dados disponíveis no endpoint.
 
 <a id="testes"></a>
 
@@ -227,6 +222,11 @@ Os testes unitários cobrem:
 - Services com mocks do client da API.
 - Hooks de busca e detalhes.
 - Estados de sucesso, erro, retry, debounce e desmontagem de componente.
+
+**Evidência de cobertura de testes unitários:**
+
+<img width="956" height="580" alt="Captura de Tela 2026-07-23 às 21 53 59" src="https://github.com/user-attachments/assets/c0f92cf7-279e-41ab-8904-225ea7a20874" />
+
 
 Comando principal:
 
@@ -251,7 +251,15 @@ O app possui tratamento visual para:
 - Cidade não encontrada.
 - Carregamento inicial.
 
-Quando ocorre erro de API ou conexão, o usuário recebe uma tela de erro com botão para tentar novamente.
+Quando ocorre erro de API ou conexão, o usuário recebe uma tela de erro com botão para tentar novamente:
+
+<img width="360" height="781" alt="Captura de Tela 2026-07-23 às 21 57 56" src="https://github.com/user-attachments/assets/e0c2eda8-bb6a-43b5-a00f-528f0ec42461" />
+
+Quando o usuário não encontra a cidade pesquisada ele recebe uma tela informativa com botão tentar novamente:
+
+<img width="360" height="775" alt="Captura de Tela 2026-07-23 às 21 59 34" src="https://github.com/user-attachments/assets/53e3f11f-d5dd-444d-a935-3564f66c461d" />
+
+
 
 <a id="acessibilidade"></a>
 
@@ -265,6 +273,13 @@ Cuidados aplicados:
 - Estados de erro e vazio renderizados com texto visível.
 - Botões reais para interações clicáveis.
 - Foco visual mantido em inputs e botões.
+
+**A aplicação foi revisada com Lighthouse e utiliza boas práticas de acessibilidade.**
+
+Observação: A cobertura não atingiu 100% de cobertura de acessibilidade apenas pelas cores escolhidas
+
+<img width="448" height="527" alt="Captura de Tela 2026-07-23 às 22 02 32" src="https://github.com/user-attachments/assets/90a078eb-3615-4d7c-b985-5a9e1aafec36" />
+
 
 <a id="performance"></a>
 
@@ -355,6 +370,3 @@ Implementado:
 Próximos passos recomendados:
 
 - Implementar camada real de tagueamento.
-- Adicionar testes de componentes.
-- Revisar acessibilidade com Lighthouse.
-- Publicar na Vercel.
