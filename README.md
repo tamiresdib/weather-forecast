@@ -338,6 +338,11 @@ O projeto está publicado na Vercel:
 
 O projeto possui tagueamento via Google Analytics 4. A implementação foi criada a partir de um mapa de coleta com `screenName`, `eventAction` e `eventLabel`, mantendo os nomes dos eventos centralizados e tipados para evitar strings soltas espalhadas pela aplicação.
 
+**Evidência de tagueamento aplicado via console:**
+
+<img width="1670" height="743" alt="Captura de Tela 2026-07-24 às 00 10 01" src="https://github.com/user-attachments/assets/81f12152-569d-4079-9b0f-e2c999ca9602" />
+
+
 Arquivos principais:
 
 - `src/shared/analytics/analyticsService.ts`: inicializa o Google Analytics, injeta o script `gtag.js` e expõe as funções de tracking.
@@ -487,3 +492,18 @@ Implementado:
 - Tagueamento com Google Analytics.
 - Otimização de assets.
 - Build para produção.
+
+## Criadora do projeto
+
+Agradecemos às seguintes pessoas que contribuíram para este projeto:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="#" title="Imagem Tamires Dib">
+        <img src="https://github.com/user-attachments/assets/085b0ef8-e6da-42d4-bbce-a9b4449f53a6" width="100px;" alt="Foto da Tamires Dib"/><br>
+        <sub>
+          <b>Tamires Dib  :)</b>
+        </sub>
+      </a>
+    </td>
