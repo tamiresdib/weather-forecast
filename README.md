@@ -12,6 +12,7 @@ https://github.com/user-attachments/assets/de6e1895-7be4-43fc-9b39-6e92f7eeebeb
 
 ## Sumário
 
+- [Processo De Design](#processo-de-design)
 - [Tecnologias](#tecnologias)
 - [Funcionalidades](#funcionalidades)
 - [Requisitos](#requisitos)
@@ -29,6 +30,22 @@ https://github.com/user-attachments/assets/de6e1895-7be4-43fc-9b39-6e92f7eeebeb
 - [Variáveis De Ambiente](#variaveis-de-ambiente)
 - [Decisões Técnicas](#decisoes-tecnicas)
 - [Status Do Projeto](#status-do-projeto)
+
+<a id="processo-de-design"></a>
+
+## Processo De Design
+
+Antes da criação das telas no Figma, o projeto foi idealizado em rascunhos no caderno. Essa etapa ajudou a definir a composição inicial das telas, a organização das informações e o fluxo principal entre boas-vindas, busca de cidade e detalhes da previsão.
+
+Depois dos rascunhos, as ideias foram refinadas no Figma para validar espaçamentos, hierarquia visual, cores, ilustrações e estados da interface.
+
+Rascunho inicial:
+
+![Rascunho inicial do projeto](./src/docs/rascunho-projeto.jpg)
+
+Protótipo no Figma:
+
+[Adicionar link do Figma aqui](#)
 
 <a id="tecnologias"></a>
 
