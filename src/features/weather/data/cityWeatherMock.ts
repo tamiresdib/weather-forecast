@@ -2,7 +2,6 @@ import type { CityWeather } from '../../types/cityWeather';
 import rainIcon from '../../../assets/images/Chuva.svg';
 import sunnyIcon from '../../../assets/images/Ensolarado.svg';
 import cloudyIcon from '../../../assets/images/Nublado.svg';
-import windyIcon from '../../../assets/images/windy_color.svg';
 
 export const cityWeatherMock: CityWeather[] = [
   {
@@ -65,7 +64,7 @@ export const cityWeatherMock: CityWeather[] = [
     minTemperature: 20,
     maxTemperature: 27,
     condition: 'Ventos fortes',
-    icon: windyIcon,
+    icon: cloudyIcon,
     time: '04:51',
     lat: -23.9608,
     lon: -46.3336,

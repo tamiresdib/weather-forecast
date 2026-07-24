@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CityWeather } from '../../types/cityWeather';
 import type { WeatherDetails } from '../../types/weatherDetails';
+import { ANALYTICS_COLLECTION_EVENTS } from '../../../shared/analytics/analyticsParameters';
+import {
+  trackCollectionEvent,
+  trackEvent,
+} from '../../../shared/analytics/analyticsService';
 import { getWeatherDetailsByCoordinates } from '../services/weatherService';
 
 export function useWeatherDetails(selectedCity: CityWeather) {
@@ -29,6 +34,10 @@ export function useWeatherDetails(selectedCity: CityWeather) {
         if (shouldUpdate()) {
           setWeatherDetails(null);
           setHasApiError(true);
+          trackEvent('api_error', {
+            city: selectedCity.city,
+            context: 'weather_details',
+          });
         }
       } finally {
         if (shouldUpdate()) {
@@ -84,7 +93,16 @@ export function useWeatherDetails(selectedCity: CityWeather) {
       activeDailyForecast?.temperature ?? weatherDetails?.currentTemperature,
     hasApiError,
     isLoading,
-    retryWeatherDetails: loadWeatherDetails,
+    retryWeatherDetails: async () => {
+      trackEvent('weather_details_retried', {
+        city: selectedCity.city,
+      });
+      trackCollectionEvent(ANALYTICS_COLLECTION_EVENTS.apiErrorRetryClicked, {
+        city: selectedCity.city,
+      });
+
+      await loadWeatherDetails();
+    },
     selectedDailyForecastId,
     setSelectedDailyForecastId,
     weatherDetails,
