@@ -1,75 +1,360 @@
-# React + TypeScript + Vite
+# Weather Forecast
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web de previsão do tempo desenvolvida em React, TypeScript e Tailwind CSS. O projeto permite buscar uma cidade, visualizar o clima atual e consultar a previsão das próximas horas e dos próximos 5 dias usando a API da OpenWeather.
 
-Currently, two official plugins are available:
+O foco do projeto é entregar uma experiência simples, responsiva e acessível, com boa organização de código, testes unitários e tratamento de erro.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Sumário
 
-## React Compiler
+- [Demonstração](#demonstracao)
+- [Tecnologias](#tecnologias)
+- [Funcionalidades](#funcionalidades)
+- [Requisitos](#requisitos)
+- [Como Rodar](#como-rodar)
+- [Scripts](#scripts)
+- [Estrutura Do Projeto](#estrutura-do-projeto)
+- [Arquitetura](#arquitetura)
+- [API](#api)
+- [Testes](#testes)
+- [Tratamento De Erro](#tratamento-de-erro)
+- [Acessibilidade](#acessibilidade)
+- [Performance](#performance)
+- [Deploy Na Vercel](#deploy-na-vercel)
+- [Tagueamento](#tagueamento)
+- [Variáveis De Ambiente](#variaveis-de-ambiente)
+- [Decisões Técnicas](#decisoes-tecnicas)
+- [Status Do Projeto](#status-do-projeto)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+<a id="demonstracao"></a>
 
-## Expanding the ESLint configuration
+## Demonstração
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+[Ver vídeo de demonstração](./src/docs/video-do-projeto.mov)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+<a id="tecnologias"></a>
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Tecnologias
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- OpenWeather API
+- Vitest
+- Testing Library
+- ESLint
+- SVGO
 
+<a id="funcionalidades"></a>
+
+## Funcionalidades
+
+- Tela inicial de boas-vindas.
+- Busca de cidade pela API da OpenWeather.
+- Cidade padrão carregada inicialmente: São Paulo.
+- Listagem do clima atual da cidade encontrada.
+- Tela de detalhes com temperatura atual, mínima, máxima e condição climática.
+- Previsão por horário.
+- Previsão para os próximos 5 dias.
+- Seleção de um dia da previsão para atualizar os detalhes exibidos.
+- Estado de carregamento com skeleton.
+- Estado de cidade não encontrada.
+- Estado de erro de API/offline com opção de tentar novamente.
+- Imagens otimizadas em WebP para reduzir o tamanho do build.
+
+<a id="requisitos"></a>
+
+## Requisitos
+
+- Node.js
+- npm
+- Chave da OpenWeather
+
+<a id="como-rodar"></a>
+
+## Como Rodar
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/tamiresdib/weather-forecast.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Acesse a pasta do projeto:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cd weather-forecast
 ```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Crie uma chave gratuita na OpenWeather:
+
+[OpenWeather API Keys](https://home.openweathermap.org/api_keys)
+
+Depois, na raiz do projeto, crie um arquivo chamado `.env` com o mesmo formato do `.env.example`, trocando o valor pela sua própria chave:
+
+```env
+VITE_OPENWEATHER_API_KEY=your_api_key_here
+```
+
+Rode o projeto em ambiente local:
+
+```bash
+npm run dev
+```
+
+<a id="scripts"></a>
+
+## Scripts
+
+Rodar o projeto localmente:
+
+```bash
+npm run dev
+```
+
+Gerar build de produção:
+
+```bash
+npm run build
+```
+
+Visualizar o build localmente:
+
+```bash
+npm run preview
+```
+
+Rodar lint:
+
+```bash
+npm run lint
+```
+
+Rodar testes:
+
+```bash
+npm run test -- --run
+```
+
+Rodar testes em modo watch:
+
+```bash
+npm run test
+```
+
+Rodar cobertura de testes:
+
+```bash
+npm run test:coverage
+```
+
+Abrir o relatório visual de cobertura:
+
+```bash
+open coverage/index.html
+```
+
+<a id="estrutura-do-projeto"></a>
+
+## Estrutura Do Projeto
+
+```txt
+src/
+  app/
+    App.tsx
+  assets/
+    images/
+  features/
+    types/
+    weather/
+      components/
+      data/
+      hooks/
+      mappers/
+      services/
+      utils/
+    welcome/
+      components/
+  test/
+    setup.ts
+```
+
+<a id="arquitetura"></a>
+
+## Arquitetura
+
+O projeto segue uma organização baseada em features. A feature principal `weather` concentra os componentes, hooks, serviços, mappers e utilitários relacionados à previsão do tempo.
+
+Responsabilidades principais:
+
+- `components`: camada visual e estados de UI.
+- `hooks`: controle de estado, carregamento, erro, retry e regras de interação.
+- `services`: orquestração das chamadas de API e conversão para os modelos da aplicação.
+- `openWeatherClient`: comunicação direta com a OpenWeather.
+- `mappers`: transformação dos DTOs da OpenWeather para os tipos usados pelo app.
+- `utils`: formatação de datas, horários e textos.
+- `types`: contratos TypeScript compartilhados pela feature.
+
+Essa separação reduz acoplamento entre UI e API, facilita testes unitários e deixa o projeto mais simples de evoluir.
+
+<a id="api"></a>
+
+## API
+
+O projeto usa a OpenWeather:
+
+- Geocoding API para buscar a cidade.
+- Current Weather API para clima atual.
+- 5 Day / 3 Hour Forecast API para previsão dos próximos dias.
+
+Observação importante: a previsão gratuita da OpenWeather retorna intervalos de 3 em 3 horas. Por isso, os horários exibidos dependem dos dados disponíveis no endpoint.
+
+<a id="testes"></a>
+
+## Testes
+
+Os testes unitários cobrem:
+
+- Helpers de data e texto.
+- Mapeamento de ícones por condição climática.
+- Conversão dos dados da OpenWeather para os modelos da aplicação.
+- Services com mocks do client da API.
+- Hooks de busca e detalhes.
+- Estados de sucesso, erro, retry, debounce e desmontagem de componente.
+
+Comando principal:
+
+```bash
+npm run test -- --run
+```
+
+Comando com cobertura:
+
+```bash
+npm run test:coverage
+```
+
+<a id="tratamento-de-erro"></a>
+
+## Tratamento De Erro
+
+O app possui tratamento visual para:
+
+- Falha na API.
+- Falta de conexão com a internet.
+- Cidade não encontrada.
+- Carregamento inicial.
+
+Quando ocorre erro de API ou conexão, o usuário recebe uma tela de erro com botão para tentar novamente.
+
+<a id="acessibilidade"></a>
+
+## Acessibilidade
+
+Cuidados aplicados:
+
+- Labels acessíveis para campos de busca.
+- `aria-label` em botões de ação.
+- Imagens decorativas com `aria-hidden`.
+- Estados de erro e vazio renderizados com texto visível.
+- Botões reais para interações clicáveis.
+- Foco visual mantido em inputs e botões.
+
+<a id="performance"></a>
+
+## Performance
+
+As ilustrações maiores foram convertidas de SVG para WebP para reduzir o tamanho do build.
+
+Antes da otimização, alguns SVGs tinham mais de 1 MB a 4 MB. Depois da conversão:
+
+- `sun-icon1.webp`: aproximadamente 100 KB no build.
+- `error-api-img.webp`: aproximadamente 228 KB no build.
+- `city-not-found.webp`: aproximadamente 504 KB no build.
+
+Os ícones pequenos de clima permanecem em SVG, pois são leves e escaláveis.
+
+<a id="deploy-na-vercel"></a>
+
+## Deploy Na Vercel
+
+O projeto pode ser publicado gratuitamente na Vercel.
+
+Configuração recomendada:
+
+- Framework Preset: `Vite`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+- Install Command: `npm install`
+
+Variável de ambiente obrigatória na Vercel:
+
+```env
+VITE_OPENWEATHER_API_KEY=your_api_key_here
+```
+
+<a id="tagueamento"></a>
+
+## Tagueamento
+
+O projeto também está preparado para receber uma camada de analytics/tagueamento. A recomendação é centralizar os eventos em um serviço único, evitando espalhar chamadas de tracking pelos componentes.
+
+Eventos recomendados:
+
+- `welcome_started`
+- `city_searched`
+- `city_selected`
+- `forecast_day_selected`
+- `api_error_retry_clicked`
+
+<a id="variaveis-de-ambiente"></a>
+
+## Variáveis De Ambiente
+
+Nunca commite o arquivo `.env`.
+
+Use apenas o `.env.example` como referência pública:
+
+```env
+VITE_OPENWEATHER_API_KEY=your_api_key_here
+```
+
+<a id="decisoes-tecnicas"></a>
+
+## Decisões Técnicas
+
+- React com TypeScript para maior segurança de tipos.
+- Tailwind CSS para velocidade de desenvolvimento e consistência visual.
+- Hooks customizados para separar regra de UI e regra de carregamento.
+- Mappers para isolar a estrutura da API externa dos modelos internos do app.
+- Services para centralizar a comunicação entre client da API e aplicação.
+- Vitest e Testing Library para testes rápidos e próximos do ecossistema Vite.
+- WebP para ilustrações grandes e SVG para ícones pequenos.
+
+<a id="status-do-projeto"></a>
+
+## Status Do Projeto
+
+Implementado:
+
+- Telas principais.
+- Integração com OpenWeather.
+- Loading skeleton.
+- Tratamento de erro.
+- Cidade não encontrada.
+- Testes unitários.
+- Otimização de assets.
+- Build para produção.
+
+Próximos passos recomendados:
+
+- Implementar camada real de tagueamento.
+- Adicionar testes de componentes.
+- Revisar acessibilidade com Lighthouse.
+- Publicar na Vercel.
