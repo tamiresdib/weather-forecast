@@ -4,6 +4,10 @@ Aplicação web de previsão do tempo desenvolvida em React, TypeScript e Tailwi
 
 O foco do projeto é entregar uma experiência simples, responsiva e acessível, com boa organização de código, testes unitários e tratamento de erro.
 
+Aplicação publicada:
+
+[https://weather-forecast-sandy-two.vercel.app/](https://weather-forecast-sandy-two.vercel.app/)
+
 https://github.com/user-attachments/assets/de6e1895-7be4-43fc-9b39-6e92f7eeebeb
 
 ## Sumário
@@ -299,7 +303,9 @@ Os ícones pequenos de clima permanecem em SVG, pois são leves e escaláveis.
 
 ## Deploy Na Vercel
 
-O projeto pode ser publicado gratuitamente na Vercel.
+O projeto está publicado na Vercel:
+
+[https://weather-forecast-sandy-two.vercel.app/](https://weather-forecast-sandy-two.vercel.app/)
 
 Configuração recomendada:
 
