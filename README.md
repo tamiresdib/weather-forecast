@@ -307,18 +307,6 @@ O projeto está publicado na Vercel:
 
 [https://weather-forecast-sandy-two.vercel.app/](https://weather-forecast-sandy-two.vercel.app/)
 
-Configuração recomendada:
-
-- Framework Preset: `Vite`
-- Build Command: `npm run build`
-- Output Directory: `dist`
-- Install Command: `npm install`
-
-Variável de ambiente obrigatória na Vercel:
-
-```env
-VITE_OPENWEATHER_API_KEY=your_api_key_here
-```
 
 <a id="tagueamento"></a>
 
