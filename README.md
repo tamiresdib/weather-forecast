@@ -48,7 +48,7 @@ Protótipo no Figma:
 
 <img width="825" height="678" alt="Captura de Tela 2026-07-23 às 22 28 47" src="https://github.com/user-attachments/assets/56d48cb3-ac0b-4d9a-8dfa-6574d91a2d91" />
 
-**Link do Figma:** https://www.figma.com/design/9USg4L5nE8JbviGhUmkqTq/Entrevista-Itau--Copy-?node-id=0-1&t=PdVIJWCQGCrYFmey-1
+O protótipo foi criado no Figma para guiar a implementação visual das telas.
 
 
 <a id="tecnologias"></a>
@@ -120,7 +120,10 @@ Depois, na raiz do projeto, crie um arquivo chamado `.env` com o mesmo formato d
 
 ```env
 VITE_OPENWEATHER_API_KEY=your_api_key_here
+VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
 ```
+
+O `VITE_GA_MEASUREMENT_ID` é opcional e serve para habilitar o Google Analytics. Caso ele não seja informado, o app continua funcionando normalmente, apenas sem enviar eventos de tagueamento.
 
 Rode o projeto em ambiente local:
 
@@ -333,9 +336,19 @@ O projeto está publicado na Vercel:
 
 ## Tagueamento
 
-O projeto possui tagueamento via Google Analytics, centralizado em um serviço único para evitar chamadas diretas de analytics espalhadas pelos componentes.
+O projeto possui tagueamento via Google Analytics 4. A implementação foi criada a partir de um mapa de coleta com `screenName`, `eventAction` e `eventLabel`, mantendo os nomes dos eventos centralizados e tipados para evitar strings soltas espalhadas pela aplicação.
 
-Para habilitar o Google Analytics, adicione o Measurement ID no arquivo `.env`:
+Arquivos principais:
+
+- `src/shared/analytics/analyticsService.ts`: inicializa o Google Analytics, injeta o script `gtag.js` e expõe as funções de tracking.
+- `src/shared/analytics/analyticsParameters.ts`: centraliza `screenNames`, `eventActions`, `eventLabels` e eventos do mapa de coleta.
+- `src/main.tsx`: chama a inicialização do Google Analytics antes de renderizar a aplicação.
+- `src/app/App.tsx`: dispara eventos de navegação entre telas.
+- `src/features/weather/hooks/useWeatherSearch.ts`: dispara eventos relacionados à busca, retry e erro.
+- `src/features/weather/hooks/useWeatherDetails.ts`: dispara eventos relacionados aos detalhes da previsão, retry e erro.
+- `src/features/weather/components/WeatherDetailsScreen.tsx`: dispara evento ao visualizar/selecionar previsão dos próximos dias.
+
+Para habilitar o Google Analytics em ambiente local, adicione o Measurement ID no arquivo `.env`:
 
 ```env
 VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
@@ -343,7 +356,40 @@ VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
 
 Caso essa variável não esteja configurada, a aplicação continua funcionando normalmente sem enviar eventos.
 
-Eventos enviados:
+Na Vercel, a mesma variável precisa ser cadastrada em `Settings > Environment Variables`:
+
+```env
+VITE_GA_MEASUREMENT_ID=your_ga_measurement_id_here
+```
+
+Depois de cadastrar a variável, é necessário fazer um novo deploy para que o valor seja aplicado no build.
+
+### Eventos do mapa de coleta
+
+O tagueamento segue o padrão:
+
+```txt
+screen_name + eventAction + event_label
+```
+
+Exemplos:
+
+| Tela | Ação | Label |
+| --- | --- | --- |
+| `tela-boas-vindas` | `tela-exibiu` | - |
+| `tela-boas-vindas` | `clicou` | `botao:continuar` |
+| `tela-inicio` | `preencheu` | `campo:buscar` |
+| `tela-inicio` | `clicou` | `botao:buscar` |
+| `tela-inicio` | `selecionou` | `cidade:sugestao` |
+| `tela-detalhes-cidade` | `tela-exibiu` | - |
+| `tela-detalhes-cidade` | `clicou` | `botao:voltar` |
+| `tela-detalhes-cidade` | `visualizou` | `secao:previsao-proximos-dias` |
+| `tela-erro-cidade-nao-encontrada` | `tela-exibiu` | - |
+| `tela-erro-cidade-nao-encontrada` | `clicou` | `botao:tentar-novamente` |
+| `tela-erro-api` | `tela-exibiu` | - |
+| `tela-erro-api` | `clicou` | `botao:tentar-novamente` |
+
+Além dos eventos do mapa de coleta, alguns eventos técnicos também são enviados para facilitar análise e depuração:
 
 - `welcome_started`
 - `page_view`
@@ -355,6 +401,50 @@ Eventos enviados:
 - `navigation_back_clicked`
 - `weather_details_retried`
 - `api_error`
+
+### Como validar no navegador
+
+Com o app aberto, acesse o DevTools do navegador e rode no Console:
+
+```js
+document.querySelector('#google-analytics-script')?.src
+```
+
+O retorno esperado deve conter o Measurement ID configurado:
+
+```txt
+https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX
+```
+
+Para visualizar os eventos enviados antes da consolidação dos relatórios no Google Analytics, rode:
+
+```js
+window.dataLayer
+```
+
+Ou filtre apenas os eventos:
+
+```js
+window.dataLayer.filter((item) => item[0] === 'event')
+```
+
+No DevTools, também é possível abrir a aba `Network`, filtrar por `collect` e interagir com o app para verificar as chamadas enviadas ao Google Analytics. Alguns relatórios do GA podem levar até 48 horas para consolidar os dados, por isso o `dataLayer` e o `Network` ajudam como evidência técnica imediata.
+
+### Testes
+
+A camada de tagueamento possui testes unitários para validar:
+
+- inicialização do Google Analytics somente quando existe Measurement ID;
+- criação do script `gtag.js`;
+- envio de eventos customizados;
+- envio de eventos no padrão do mapa de coleta;
+- comportamento seguro quando o Google Analytics está desabilitado.
+
+Comando para executar apenas os testes de analytics:
+
+```bash
+npm run test -- --run src/shared/analytics
+```
 
 <a id="variaveis-de-ambiente"></a>
 
